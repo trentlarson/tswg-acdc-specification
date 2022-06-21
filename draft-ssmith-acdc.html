@@ -9,26 +9,26 @@
 <meta content="
        An authentic chained data container (ACDC)    is an IETF   internet draft focused specification being incubated at the ToIP (Trust over IP) foundation  .  An ACDC is a variant of the W3C Verifiable Credential (VC) specification  . The W3C VC specification depends on the W3C DID (Decentralized IDentifier) specification  . A major use case for the ACDC specification is to provide GLEIF vLEIs (verifiable Legal Entity Identifiers)  . GLEIF is the Global Legal Entity Identifier Foundation  . ACDCs are dependent on a suite of related IETF focused standards associated with the KERI (Key Event Receipt Infrastructure)   specification. These include CESR  , SAID  , PTEL  , CESR-Proof  , IPEX  , did:keri  , and OOBI  . Some of the major distinguishing features of ACDCs include normative support for chaining, use of composable JSON Schema  , multiple serialization formats, namely, JSON  , CBOR  , MGPK  , and CESR  , support for Ricardian contracts  ,  support for chain-link confidentiality  , a well defined security model derived from KERI  ,  compact  formats for resource constrained applications, simple  partial disclosure  mechanisms and simple  selective disclosure  mechanisms. ACDCs provision data using a synergy of provenance, protection, and performance. 
     " name="description">
-<meta content="xml2rfc 3.12.6" name="generator">
+<meta content="xml2rfc 3.12.10" name="generator">
 <meta content="Internet-Draft" name="keyword">
 <meta content="draft-ssmith-acdc-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.12.6
-    Python 3.9.7
+  xml2rfc 3.12.10
+    Python 3.10.4
     appdirs 1.4.4
-    ConfigArgParse 1.3
+    ConfigArgParse 1.5.3
     google-i18n-address 2.5.1
     html5lib 1.1
     intervaltree 3.1.0
     Jinja2 2.11.3
     kitchen 1.2.6
-    lxml 4.6.5
+    lxml 4.8.0
     MarkupSafe 2.0.1
     pycountry 20.7.3
-    pyflakes 2.3.1
-    PyYAML 5.4.1
-    requests 2.26.0
-    setuptools 52.0.0
+    pyflakes 2.4.0
+    PyYAML 6.0
+    requests 2.27.1
+    setuptools 59.4.0
     six 1.16.0
 -->
 <link href="draft-ssmith-acdc.xml" rel="alternate" type="application/rfc+xml">
@@ -153,6 +153,14 @@
   font-weight: 700;
   font-display: swap;
   src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Lora SemiBold'), local('Lora-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-semibold-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
@@ -336,7 +344,7 @@ ol, ul {
   padding: 0;
   margin: 0 0 0.5em 2em;
 }
-ol ol, ul ul, ol ul, ul ol {
+:is(ol, ul) :is(ol, ul) {
   margin-left: 1em;
 }
 li {
@@ -351,8 +359,7 @@ ul.empty, .ulEmpty {
 ul.empty li, .ulEmpty li {
   margin-top: 0.5em;
 }
-ul.compact, .ulCompact,
-ol.compact, .olCompact {
+:is(ul, ol).compact, .ulCompact, .olCompact {
   line-height: 100%;
   margin: 0 0 0 2em;
 }
@@ -368,7 +375,7 @@ dl > dd {
   margin-bottom: .8em;
   min-height: 1.3em;
 }
-dl.compact > dd, .dlCompact > dd {
+:is(dl.compact, .dlCompact) > dd {
   margin-bottom: 0em;
 }
 dl > dd > dl {
@@ -410,6 +417,9 @@ tt, code {
      remove leading to avoid altering the final height of lines */
   line-height: 0;
 }
+:is(h1, h2, h3, h4, h5, h6) :is(tt, code) {
+  font-size: 84%;
+}
 pre {
   border: 1px solid var(--line-color);
   font-size: 13.5px;
@@ -434,6 +444,19 @@ figcaption, caption {
   text-align: left;
 }
 @media screen {
+  /* Auto-collapse boilerplate. */
+  :is(#status-of-memo, #copyright) p {
+    margin: -2px 0;
+    max-height: 0;
+    transition: max-height 2s ease, margin 0.5s ease 0.5s;
+    overflow: hidden;
+  }
+  :is(#status-of-memo, #copyright):hover p,
+  :is(#status-of-memo, #copyright) h2:target ~ p {
+    margin: 0.5em 0;
+    max-height: 500px;
+    overflow: auto;
+  }
   pre, svg {
     display: inline-block;
     overflow-x: auto;
@@ -449,7 +472,7 @@ figcaption, caption {
     display: block;
     width: calc(100% - 25px);
   }
-  pre + .pilcrow, svg + .pilcrow {
+  :is(pre, svg) + .pilcrow {
     display: inline-block;
     vertical-align: text-bottom;
     padding-bottom: 8px;
@@ -498,17 +521,11 @@ th, td {
 th {
   background-color: var(--line-color);
 }
-tr:nth-child(2n) > td {
+:is(tr:nth-child(2n), thead+tbody > tr:nth-child(2n+1)) > td {
   background-color: var(--background-color);
 }
-tr:nth-child(2n+1) > td {
+:is(tr:nth-child(2n+1), thead+tbody > tr:nth-child(2n)) > td {
   background-color: var(--highlight-color);
-}
-thead+tbody > tr:nth-child(2n) > td {
-  background-color: var(--highlight-color);
-}
-thead+tbody > tr:nth-child(2n+1) > td {
-  background-color: var(--background-color);
 }
 table caption {
   margin: 0;
@@ -548,8 +565,9 @@ hr {
 }
 .bcp14 {
   font-variant: small-caps;
+  font-weight: 600;
+  font-size: 14.5px;
 }
-
 .role {
   font-variant: all-small-caps;
 }
@@ -788,7 +806,7 @@ hr.addr {
     margin: 0 0 0 4px;
     font-size: var(--small-font-size);
   }
-  #toc ul p, #toc ul li {
+  #toc ul :is(p, li) {
     margin: 2px 0;
     line-height: 22px;
   }
@@ -898,13 +916,13 @@ dl.dlNewline > dt {
 }
 
 /* Provide styling for table cell text alignment */
-table .text-left, table .text-left {
+table .text-left {
   text-align: left;
 }
-table .text-center, table .text-center {
+table .text-center {
   text-align: center;
 }
-table .text-right, table .text-right {
+table .text-right {
   text-align: right;
 }
 
@@ -971,12 +989,6 @@ address div.right {
   }
 
 }
-/* Tweak the bcp14 keyword presentation */
-.bcp14 {
-  font-variant: small-caps;
-  font-weight: bold;
-  font-size: 0.9em;
-}
 
 /* Dark mode. */
 @media (prefers-color-scheme: dark) {
@@ -991,19 +1003,20 @@ address div.right {
   --pilcrow-strong: #666;
   scrollbar-color: #777 #333;
 }
-/* Trick: a prefix match works because only black and white are allowed */
-svg [stroke="black"], svg [stroke^="#000"] {
+}
+
+/* SVG Trick: a prefix match works because only black and white are allowed */
+svg :is([stroke="black"], [stroke^="#000"]) {
   stroke: var(--text-color);
 }
-svg [stroke="white"], svg [stroke^="#fff"] {
+svg :is([stroke="white"], [stroke^="#fff"]) {
   stroke: var(--background-color);
 }
-svg [fill="black"], svg [fill^="#000"], svg :not([fill]) {
+svg :is([fill="black"], [fill^="#000"], :not([fill])) {
   fill: var(--text-color);
 }
-svg [stroke="fill"], svg [fill^="#fff"] {
+svg :is([stroke="fill"], [fill^="#fff"]) {
   fill: var(--background-color);
-}
 }
 </style>
 
@@ -1013,11 +1026,11 @@ svg [stroke="fill"], svg [fill^="#fff"] {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">ACDC</td>
-<td class="right">May 2022</td>
+<td class="right">June 2022</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Smith</td>
-<td class="center">Expires 18 November 2022</td>
+<td class="center">Expires 23 December 2022</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1030,12 +1043,12 @@ svg [stroke="fill"], svg [fill^="#fff"] {
 <dd class="internet-draft">draft-ssmith-acdc-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2022-05-17" class="published">17 May 2022</time>
+<time datetime="2022-06-21" class="published">21 June 2022</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2022-11-18">18 November 2022</time></dd>
+<dd class="expires"><time datetime="2022-12-23">23 December 2022</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1069,7 +1082,7 @@ svg [stroke="fill"], svg [fill^="#fff"] {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 18 November 2022.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 23 December 2022.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1303,31 +1316,34 @@ svg [stroke="fill"], svg [fill^="#fff"] {
                     <p id="section-toc.1-1.9.2.6.2.4.1"><a href="#section-9.6.4" class="xref">9.6.4</a>.  <a href="#name-weight-w-field" class="xref">Weight, <code>w</code>, field.</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.6.2.5">
-                    <p id="section-toc.1-1.9.2.6.2.5.1"><a href="#section-9.6.5" class="xref">9.6.5</a>.  <a href="#name-special-unary-operators" class="xref">Special Unary Operators</a></p>
+                    <p id="section-toc.1-1.9.2.6.2.5.1"><a href="#section-9.6.5" class="xref">9.6.5</a>.  <a href="#name-m-ary-operators" class="xref">M-ary Operators</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.6.2.6">
-                    <p id="section-toc.1-1.9.2.6.2.6.1"><a href="#section-9.6.6" class="xref">9.6.6</a>.  <a href="#name-defaults-for-missing-operat" class="xref">Defaults for missing operators</a></p>
+                    <p id="section-toc.1-1.9.2.6.2.6.1"><a href="#section-9.6.6" class="xref">9.6.6</a>.  <a href="#name-special-unary-operators" class="xref">Special Unary Operators</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.6.2.7">
-                    <p id="section-toc.1-1.9.2.6.2.7.1"><a href="#section-9.6.7" class="xref">9.6.7</a>.  <a href="#name-examples" class="xref">Examples</a></p>
+                    <p id="section-toc.1-1.9.2.6.2.7.1"><a href="#section-9.6.7" class="xref">9.6.7</a>.  <a href="#name-defaults-for-missing-operat" class="xref">Defaults for missing operators</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.6.2.8">
-                    <p id="section-toc.1-1.9.2.6.2.8.1"><a href="#section-9.6.8" class="xref">9.6.8</a>.  <a href="#name-explicit-and" class="xref">Explicit AND</a></p>
+                    <p id="section-toc.1-1.9.2.6.2.8.1"><a href="#section-9.6.8" class="xref">9.6.8</a>.  <a href="#name-examples" class="xref">Examples</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.6.2.9">
-                    <p id="section-toc.1-1.9.2.6.2.9.1"><a href="#section-9.6.9" class="xref">9.6.9</a>.  <a href="#name-unary-i2i" class="xref">Unary I2I</a></p>
+                    <p id="section-toc.1-1.9.2.6.2.9.1"><a href="#section-9.6.9" class="xref">9.6.9</a>.  <a href="#name-explicit-and" class="xref">Explicit AND</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.6.2.10">
-                    <p id="section-toc.1-1.9.2.6.2.10.1"><a href="#section-9.6.10" class="xref">9.6.10</a>. <a href="#name-unary-ni2i" class="xref">Unary NI2I</a></p>
+                    <p id="section-toc.1-1.9.2.6.2.10.1"><a href="#section-9.6.10" class="xref">9.6.10</a>. <a href="#name-unary-i2i" class="xref">Unary I2I</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.6.2.11">
-                    <p id="section-toc.1-1.9.2.6.2.11.1"><a href="#section-9.6.11" class="xref">9.6.11</a>. <a href="#name-nested-edge-group" class="xref">Nested Edge-Group</a></p>
+                    <p id="section-toc.1-1.9.2.6.2.11.1"><a href="#section-9.6.11" class="xref">9.6.11</a>. <a href="#name-unary-ni2i" class="xref">Unary NI2I</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.6.2.12">
-                    <p id="section-toc.1-1.9.2.6.2.12.1"><a href="#section-9.6.12" class="xref">9.6.12</a>. <a href="#name-vlei-ecr-issued-by-qvi-exam" class="xref">vLEI ECR issued by QVI example</a></p>
+                    <p id="section-toc.1-1.9.2.6.2.12.1"><a href="#section-9.6.12" class="xref">9.6.12</a>. <a href="#name-nested-edge-group" class="xref">Nested Edge-Group</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.6.2.13">
-                    <p id="section-toc.1-1.9.2.6.2.13.1"><a href="#section-9.6.13" class="xref">9.6.13</a>. <a href="#name-commentary" class="xref">Commentary</a></p>
+                    <p id="section-toc.1-1.9.2.6.2.13.1"><a href="#section-9.6.13" class="xref">9.6.13</a>. <a href="#name-vlei-ecr-issued-by-qvi-exam" class="xref">vLEI ECR issued by QVI example</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.6.2.14">
+                    <p id="section-toc.1-1.9.2.6.2.14.1"><a href="#section-9.6.14" class="xref">9.6.14</a>. <a href="#name-commentary" class="xref">Commentary</a></p>
 </li>
                 </ul>
 </li>
@@ -1381,41 +1397,47 @@ svg [stroke="fill"], svg [fill^="#fff"] {
             <p id="section-toc.1-1.13.1"><a href="#section-13" class="xref">13</a>. <a href="#name-selective-disclosure" class="xref">Selective Disclosure</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.1">
-                <p id="section-toc.1-1.13.2.1.1"><a href="#section-13.1" class="xref">13.1</a>.  <a href="#name-selectively-disclosable-attr" class="xref">Selectively Disclosable Attribute ACDC</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.1.2.1">
-                    <p id="section-toc.1-1.13.2.1.2.1.1"><a href="#section-13.1.1" class="xref">13.1.1</a>.  <a href="#name-blinded-attribute-array" class="xref">Blinded Attribute Array</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.1.2.2">
-                    <p id="section-toc.1-1.13.2.1.2.2.1"><a href="#section-13.1.2" class="xref">13.1.2</a>.  <a href="#name-composed-schema-for-selecti" class="xref">Composed Schema for Selectively Disclosable Attribute Section</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.1.2.3">
-                    <p id="section-toc.1-1.13.2.1.2.3.1"><a href="#section-13.1.3" class="xref">13.1.3</a>.  <a href="#name-inclusion-proof-via-aggrega" class="xref">Inclusion Proof via Aggregated List Digest</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.1.2.4">
-                    <p id="section-toc.1-1.13.2.1.2.4.1"><a href="#section-13.1.4" class="xref">13.1.4</a>.  <a href="#name-inclusion-proof-via-merkle-" class="xref">Inclusion Proof via Merkle Tree Root Digest</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.1.2.5">
-                    <p id="section-toc.1-1.13.2.1.2.5.1"><a href="#section-13.1.5" class="xref">13.1.5</a>.  <a href="#name-hierarchical-derivation-at-" class="xref">Hierarchical Derivation at Issuance of Selectively Disclosable Attribute ACDCs</a></p>
-</li>
-                </ul>
+                <p id="section-toc.1-1.13.2.1.1"><a href="#section-13.1" class="xref">13.1</a>.  <a href="#name-tiered-selective-disclosure" class="xref">Tiered Selective Disclosure Mechanisms</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.2">
-                <p id="section-toc.1-1.13.2.2.1"><a href="#section-13.2" class="xref">13.2</a>.  <a href="#name-bulk-issued-private-acdcs" class="xref">Bulk-Issued Private ACDCs</a></p>
+                <p id="section-toc.1-1.13.2.2.1"><a href="#section-13.2" class="xref">13.2</a>.  <a href="#name-basic-selective-disclosure-" class="xref">Basic Selective Disclosure Mechanism</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.3">
-                <p id="section-toc.1-1.13.2.3.1"><a href="#section-13.3" class="xref">13.3</a>.  <a href="#name-basic-bulk-issuance" class="xref">Basic Bulk Issuance</a></p>
+                <p id="section-toc.1-1.13.2.3.1"><a href="#section-13.3" class="xref">13.3</a>.  <a href="#name-selectively-disclosable-attr" class="xref">Selectively Disclosable Attribute ACDC</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.3.2.1">
-                    <p id="section-toc.1-1.13.2.3.2.1.1"><a href="#section-13.3.1" class="xref">13.3.1</a>.  <a href="#name-inclusion-proof-via-merkle-t" class="xref">Inclusion Proof via Merkle Tree</a></p>
+                    <p id="section-toc.1-1.13.2.3.2.1.1"><a href="#section-13.3.1" class="xref">13.3.1</a>.  <a href="#name-blinded-attribute-array" class="xref">Blinded Attribute Array</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.3.2.2">
-                    <p id="section-toc.1-1.13.2.3.2.2.1"><a href="#section-13.3.2" class="xref">13.3.2</a>.  <a href="#name-bulk-issuance-of-private-ac" class="xref">Bulk Issuance of Private ACDCs with Unique Issuee AIDs</a></p>
+                    <p id="section-toc.1-1.13.2.3.2.2.1"><a href="#section-13.3.2" class="xref">13.3.2</a>.  <a href="#name-composed-schema-for-selecti" class="xref">Composed Schema for Selectively Disclosable Attribute Section</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.3.2.3">
+                    <p id="section-toc.1-1.13.2.3.2.3.1"><a href="#section-13.3.3" class="xref">13.3.3</a>.  <a href="#name-inclusion-proof-via-aggrega" class="xref">Inclusion Proof via Aggregated List Digest</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.3.2.4">
+                    <p id="section-toc.1-1.13.2.3.2.4.1"><a href="#section-13.3.4" class="xref">13.3.4</a>.  <a href="#name-inclusion-proof-via-merkle-" class="xref">Inclusion Proof via Merkle Tree Root Digest</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.3.2.5">
+                    <p id="section-toc.1-1.13.2.3.2.5.1"><a href="#section-13.3.5" class="xref">13.3.5</a>.  <a href="#name-hierarchical-derivation-at-" class="xref">Hierarchical Derivation at Issuance of Selectively Disclosable Attribute ACDCs</a></p>
 </li>
                 </ul>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.4">
-                <p id="section-toc.1-1.13.2.4.1"><a href="#section-13.4" class="xref">13.4</a>.  <a href="#name-independent-tel-bulk-issued" class="xref">Independent TEL Bulk-Issued ACDCs</a></p>
+                <p id="section-toc.1-1.13.2.4.1"><a href="#section-13.4" class="xref">13.4</a>.  <a href="#name-bulk-issued-private-acdcs" class="xref">Bulk-Issued Private ACDCs</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.5">
+                <p id="section-toc.1-1.13.2.5.1"><a href="#section-13.5" class="xref">13.5</a>.  <a href="#name-basic-bulk-issuance" class="xref">Basic Bulk Issuance</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.5.2.1">
+                    <p id="section-toc.1-1.13.2.5.2.1.1"><a href="#section-13.5.1" class="xref">13.5.1</a>.  <a href="#name-inclusion-proof-via-merkle-t" class="xref">Inclusion Proof via Merkle Tree</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.5.2.2">
+                    <p id="section-toc.1-1.13.2.5.2.2.1"><a href="#section-13.5.2" class="xref">13.5.2</a>.  <a href="#name-bulk-issuance-of-private-ac" class="xref">Bulk Issuance of Private ACDCs with Unique Issuee AIDs</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.6">
+                <p id="section-toc.1-1.13.2.6.1"><a href="#section-13.6" class="xref">13.6</a>.  <a href="#name-independent-tel-bulk-issued" class="xref">Independent TEL Bulk-Issued ACDCs</a></p>
 </li>
             </ul>
 </li>
@@ -1779,7 +1801,7 @@ svg [stroke="fill"], svg [fill^="#fff"] {
       <h2 id="name-acdc-variants">
 <a href="#section-4" class="section-number selfRef">4. </a><a href="#name-acdc-variants" class="section-name selfRef">ACDC Variants</a>
       </h2>
-<p id="section-4-1">There are several variants of ACDCs determined by the presence/absence of certain fields and/or the value of those fields. 
+<p id="section-4-1">There are several variants of ACDCs determined by the presence/absence of certain fields and/or the value of those fields.
 At the top level, the presence (absence), of the UUID, <code>u</code>, field produces two variants. These are private (public) respectively. In addition, a present but empty UUID, <code>u</code>, field produces a private metadata variant.<a href="#section-4-1" class="pilcrow">¶</a></p>
 <div id="public-acdc">
 <section id="section-4.1">
@@ -2691,44 +2713,116 @@ any value except reserved values above<a href="#section-9.6.1-2.3" class="pilcro
 </div>
 </section>
 </div>
-<div id="special-unary-operators">
+<div id="m-ary-operators">
 <section id="section-9.6.5">
-          <h4 id="name-special-unary-operators">
-<a href="#section-9.6.5" class="section-number selfRef">9.6.5. </a><a href="#name-special-unary-operators" class="section-name selfRef">Special Unary Operators</a>
+          <h4 id="name-m-ary-operators">
+<a href="#section-9.6.5" class="section-number selfRef">9.6.5. </a><a href="#name-m-ary-operators" class="section-name selfRef">M-ary Operators</a>
           </h4>
-<p id="section-9.6.5-1">Two special unary operators are defined for ACDCs. These are,<a href="#section-9.6.5-1" class="pilcrow">¶</a></p>
-<p id="section-9.6.5-2">Issuee-To-Issuer, <code>I2I</code>, constraint operator
-and 
-Not-Issuee-To-Issuer, <code>NI2I</code>, constraint operator<a href="#section-9.6.5-2" class="pilcrow">¶</a></p>
-<p id="section-9.6.5-3">Many ACDC chains use targeted ACDCs (i.e. have Issuees). A chain of Issuer-To-Issuee-To-Issuer targeted ACDCs in which each Issuee becomes the Issuer of the next ACDC in the chain can be used to provide a chain-of-authority. A common use case of a chain-of-authority is a delegation chain for authorization.<a href="#section-9.6.5-3" class="pilcrow">¶</a></p>
-<p id="section-9.6.5-4">The <code>I2I</code> unary operator when present means that the Issuee of the node that the edge points to <span class="bcp14">MUST</span> be the Issuer of the current ACDC in which the edge resides. This also means therefore that the ACDC node pointed to by the edge must also be a targeted ACDC.<a href="#section-9.6.5-4" class="pilcrow">¶</a></p>
-<p id="section-9.6.5-5">The <code>NI2I</code> unary operator when present removes or nullifies any requirement expressed by the dual <code>I2I</code> operator described above. In other words, any requirement that the Issuee of the node the edge points to <span class="bcp14">MUST</span> be the Issuer of the current ACDC in which the edge resides is not applicable. To clarify, when operative (present), the <code>NI2I</code> operator means that a targeted ACDC as a node of the associated edge may still be valid even when the Issuee of that node's ACDC is not the Issuer of the ACDC in which the edge appears. Furthermore, the ACDC node pointed to by the edge may or may not be a targeted ACDC.<a href="#section-9.6.5-5" class="pilcrow">¶</a></p>
-<p id="section-9.6.5-6">If both the <code>I2I</code> and <code>NI2I</code> operators appear in an operator, <code>o</code>, field list then the last one appearing in the list is the operative one.<a href="#section-9.6.5-6" class="pilcrow">¶</a></p>
+<p id="section-9.6.5-1">There are two basic m-ary operators defined for ACDCs. These are,<a href="#section-9.6.5-1" class="pilcrow">¶</a></p>
+<table class="center" id="table-3">
+            <caption><a href="#table-3" class="selfRef">Table 3</a></caption>
+<thead>
+              <tr>
+                <th class="text-center" rowspan="1" colspan="1">M-ary Operator</th>
+                <th class="text-left" rowspan="1" colspan="1">Description</th>
+                <th class="text-left" rowspan="1" colspan="1">Type</th>
+                <th class="text-left" rowspan="1" colspan="1">Default</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-center" rowspan="1" colspan="1">
+                  <code>AND</code>
+</td>
+                <td class="text-left" rowspan="1" colspan="1">All edges or edge-groups in the edge group <span class="bcp14">MUST</span> be valid for the edge-group to be valid</td>
+                <td class="text-left" rowspan="1" colspan="1">Combination</td>
+                <td class="text-left" rowspan="1" colspan="1">Yes</td>
+              </tr>
+              <tr>
+                <td class="text-center" rowspan="1" colspan="1">
+                  <code>OR</code>
+</td>
+                <td class="text-left" rowspan="1" colspan="1">Only one of the edges or edge-groups in the edge group <span class="bcp14">MUST</span> be valid for the edge-group to be valid</td>
+                <td class="text-left" rowspan="1" colspan="1">Combination</td>
+                <td class="text-left" rowspan="1" colspan="1">No</td>
+              </tr>
+            </tbody>
+          </table>
+</section>
+</div>
+<div id="special-unary-operators">
+<section id="section-9.6.6">
+          <h4 id="name-special-unary-operators">
+<a href="#section-9.6.6" class="section-number selfRef">9.6.6. </a><a href="#name-special-unary-operators" class="section-name selfRef">Special Unary Operators</a>
+          </h4>
+<p id="section-9.6.6-1">There are three special unary operators defined for ACDCs. These are,<a href="#section-9.6.6-1" class="pilcrow">¶</a></p>
+<table class="center" id="table-4">
+            <caption><a href="#table-4" class="selfRef">Table 4</a></caption>
+<thead>
+              <tr>
+                <th class="text-center" rowspan="1" colspan="1">Unary Operator</th>
+                <th class="text-left" rowspan="1" colspan="1">Description</th>
+                <th class="text-left" rowspan="1" colspan="1">Type</th>
+                <th class="text-left" rowspan="1" colspan="1">Default</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-center" rowspan="1" colspan="1">
+                  <code>I2I</code>
+</td>
+                <td class="text-left" rowspan="1" colspan="1">Issuee-To-Issuer, Issuer AID of this ACDC must Issuee AID of node the edge points to</td>
+                <td class="text-left" rowspan="1" colspan="1">Constraint</td>
+                <td class="text-left" rowspan="1" colspan="1">Yes</td>
+              </tr>
+              <tr>
+                <td class="text-center" rowspan="1" colspan="1">
+                  <code>NI2I</code>
+</td>
+                <td class="text-left" rowspan="1" colspan="1">Not-Issuee-To-Issuer, Issuer AID if any of this ACDC  <span class="bcp14">MAY</span> or <span class="bcp14">MAY</span> NOT be Issuee AID of node that the edge points to</td>
+                <td class="text-left" rowspan="1" colspan="1">Constraint</td>
+                <td class="text-left" rowspan="1" colspan="1">No</td>
+              </tr>
+              <tr>
+                <td class="text-center" rowspan="1" colspan="1">
+                  <code>DI2I</code>
+</td>
+                <td class="text-left" rowspan="1" colspan="1">Delegated-Issuee-To-Issuer, Issuer AID of this ACDC <span class="bcp14">MUST</span> be either the Issuee AID or delegated AID of the Issuee AID of the node the edge points to</td>
+                <td class="text-left" rowspan="1" colspan="1">Constraint</td>
+                <td class="text-left" rowspan="1" colspan="1">No</td>
+              </tr>
+            </tbody>
+          </table>
+<p id="section-9.6.6-3">Many ACDC chains use targeted ACDCs (i.e. have Issuees). A chain of Issuer-To-Issuee-To-Issuer targeted ACDCs in which each Issuee becomes the Issuer of the next ACDC in the chain can be used to provide a chain-of-authority. A common use case of a chain-of-authority is a delegation chain for authorization.<a href="#section-9.6.6-3" class="pilcrow">¶</a></p>
+<p id="section-9.6.6-4">The <code>I2I</code> unary operator when present means that the Issuer AID of the current ACDC in which the edge resides  <span class="bcp14">MUST</span> be the Issuee AID of the node that the edge points to. This also means therefore that the ACDC node pointed to by the edge must also be a targeted ACDC. This is the default value when none of <code>I2I</code>, <code>NI2I</code>, or <code>DI2I</code> is present.<a href="#section-9.6.6-4" class="pilcrow">¶</a></p>
+<p id="section-9.6.6-5">The <code>NI2I</code> unary operator when present removes or nullifies any requirement expressed by the dual <code>I2I</code> operator described above. In other words, any requirement that the Issuer AID of the current ACDC in which the edge resides <span class="bcp14">MUST</span> be the Issuee AID, if any, of the node the edge points to is relaxed (not applicable). To clarify, when operative (present), the <code>NI2I</code> operator means that both an untargeted ACDC or targeted ACDC as the node pointed to by the edge may still be valid even when untargeted or if targeted even when the Issuer of the ACDC in which the edge appears is not the Issuee AID, of that node the edge points to.<a href="#section-9.6.6-5" class="pilcrow">¶</a></p>
+<p id="section-9.6.6-6">The <code>DI2I</code> unary operator when present expands the class of allowed Issuer AIDs of the node the edge resides in to include not only the Issuee AID but also any delegated AIDS of the Issuee of the node the edge points to.  This also means therefore that the ACDC node pointed to by the edge must also be a targeted ACDC.<a href="#section-9.6.6-6" class="pilcrow">¶</a></p>
+<p id="section-9.6.6-7">If more than one of the <code>I2I</code>, <code>NI2I</code>, or <code>DI2I</code> operators appear in an operator, <code>o</code>, field list then the last one appearing in the list is the operative one.<a href="#section-9.6.6-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="defaults-for-missing-operators">
-<section id="section-9.6.6">
+<section id="section-9.6.7">
           <h4 id="name-defaults-for-missing-operat">
-<a href="#section-9.6.6" class="section-number selfRef">9.6.6. </a><a href="#name-defaults-for-missing-operat" class="section-name selfRef">Defaults for missing operators</a>
+<a href="#section-9.6.7" class="section-number selfRef">9.6.7. </a><a href="#name-defaults-for-missing-operat" class="section-name selfRef">Defaults for missing operators</a>
           </h4>
-<p id="section-9.6.6-1">When the operator, <code>o</code>, field is missing in an edge-group block.
-The default value for the operator, <code>o</code>, field is <code>AND</code>.<a href="#section-9.6.6-1" class="pilcrow">¶</a></p>
-<p id="section-9.6.6-2">When the operator, <code>o</code>, field is missing or empty in an edge block, or is present but does not include either the <code>I2I</code> or <code>NI2I</code> operators Then,<a href="#section-9.6.6-2" class="pilcrow">¶</a></p>
-<p id="section-9.6.6-3">If the node pointed to by the edge is a targeted ACDC i.e. has an Issuee, by default it is assumed that the <code>I2I</code> operator is appended to the operator, <code>o</code>, field's effective list value.<a href="#section-9.6.6-3" class="pilcrow">¶</a></p>
-<p id="section-9.6.6-4">If the node pointed to by the edge-block is a non-targeted ACDC i.e. does not have an Issuee, by default, it is assumed that the <code>NI2I</code> operator is appended to the operator, <code>o</code>, field's effective list value.<a href="#section-9.6.6-4" class="pilcrow">¶</a></p>
+<p id="section-9.6.7-1">When the operator, <code>o</code>, field is missing in an edge-group block.
+The default value for the operator, <code>o</code>, field is <code>AND</code>.<a href="#section-9.6.7-1" class="pilcrow">¶</a></p>
+<p id="section-9.6.7-2">When the operator, <code>o</code>, field is missing or empty in an edge block, or is present but does not include any of the <code>I2I</code>, <code>NI2I</code> or <code>DI2I</code> operators then,<a href="#section-9.6.7-2" class="pilcrow">¶</a></p>
+<p id="section-9.6.7-3">If the node pointed to by the edge is a targeted ACDC i.e. has an Issuee, by default it is assumed that the <code>I2I</code> operator is appended to the operator, <code>o</code>, field's effective list value.<a href="#section-9.6.7-3" class="pilcrow">¶</a></p>
+<p id="section-9.6.7-4">If the node pointed to by the edge-block is a non-targeted ACDC i.e. does not have an Issuee, by default, it is assumed that the <code>NI2I</code> operator is appended to the operator, <code>o</code>, field's effective list value.<a href="#section-9.6.7-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="examples">
-<section id="section-9.6.7">
+<section id="section-9.6.8">
           <h4 id="name-examples">
-<a href="#section-9.6.7" class="section-number selfRef">9.6.7. </a><a href="#name-examples" class="section-name selfRef">Examples</a>
+<a href="#section-9.6.8" class="section-number selfRef">9.6.8. </a><a href="#name-examples" class="section-name selfRef">Examples</a>
           </h4>
 <div id="defaults">
-<section id="section-9.6.7.1">
+<section id="section-9.6.8.1">
             <h5 id="name-defaults">
-<a href="#section-9.6.7.1" class="section-number selfRef">9.6.7.1. </a><a href="#name-defaults" class="section-name selfRef">Defaults</a>
+<a href="#section-9.6.8.1" class="section-number selfRef">9.6.8.1. </a><a href="#name-defaults" class="section-name selfRef">Defaults</a>
             </h5>
-<div id="section-9.6.7.1-1">
+<div id="section-9.6.8.1-1">
 <pre class="lang-json sourcecode">
 {
   "e":
@@ -2746,18 +2840,18 @@ The default value for the operator, <code>o</code>, field is <code>AND</code>.<a
     }
   }
 }
-</pre><a href="#section-9.6.7.1-1" class="pilcrow">¶</a>
+</pre><a href="#section-9.6.8.1-1" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
 </section>
 </div>
 <div id="explicit-and">
-<section id="section-9.6.8">
+<section id="section-9.6.9">
           <h4 id="name-explicit-and">
-<a href="#section-9.6.8" class="section-number selfRef">9.6.8. </a><a href="#name-explicit-and" class="section-name selfRef">Explicit AND</a>
+<a href="#section-9.6.9" class="section-number selfRef">9.6.9. </a><a href="#name-explicit-and" class="section-name selfRef">Explicit AND</a>
           </h4>
-<div id="section-9.6.8-1">
+<div id="section-9.6.9-1">
 <pre class="lang-json sourcecode">
 {
   "e":
@@ -2777,16 +2871,16 @@ The default value for the operator, <code>o</code>, field is <code>AND</code>.<a
     }
   }
 }
-</pre><a href="#section-9.6.8-1" class="pilcrow">¶</a>
+</pre><a href="#section-9.6.9-1" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
 <div id="unary-i2i">
-<section id="section-9.6.9">
+<section id="section-9.6.10">
           <h4 id="name-unary-i2i">
-<a href="#section-9.6.9" class="section-number selfRef">9.6.9. </a><a href="#name-unary-i2i" class="section-name selfRef">Unary I2I</a>
+<a href="#section-9.6.10" class="section-number selfRef">9.6.10. </a><a href="#name-unary-i2i" class="section-name selfRef">Unary I2I</a>
           </h4>
-<div id="section-9.6.9-1">
+<div id="section-9.6.10-1">
 <pre class="lang-json sourcecode">
 {
   "e":
@@ -2806,16 +2900,16 @@ The default value for the operator, <code>o</code>, field is <code>AND</code>.<a
     }
   }
 }
-</pre><a href="#section-9.6.9-1" class="pilcrow">¶</a>
+</pre><a href="#section-9.6.10-1" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
 <div id="unary-ni2i">
-<section id="section-9.6.10">
+<section id="section-9.6.11">
           <h4 id="name-unary-ni2i">
-<a href="#section-9.6.10" class="section-number selfRef">9.6.10. </a><a href="#name-unary-ni2i" class="section-name selfRef">Unary NI2I</a>
+<a href="#section-9.6.11" class="section-number selfRef">9.6.11. </a><a href="#name-unary-ni2i" class="section-name selfRef">Unary NI2I</a>
           </h4>
-<div id="section-9.6.10-1">
+<div id="section-9.6.11-1">
 <pre class="lang-json sourcecode">
 {
   "e":
@@ -2836,16 +2930,16 @@ The default value for the operator, <code>o</code>, field is <code>AND</code>.<a
     }
   }
 }
-</pre><a href="#section-9.6.10-1" class="pilcrow">¶</a>
+</pre><a href="#section-9.6.11-1" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
 <div id="nested-edge-group">
-<section id="section-9.6.11">
+<section id="section-9.6.12">
           <h4 id="name-nested-edge-group">
-<a href="#section-9.6.11" class="section-number selfRef">9.6.11. </a><a href="#name-nested-edge-group" class="section-name selfRef">Nested Edge-Group</a>
+<a href="#section-9.6.12" class="section-number selfRef">9.6.12. </a><a href="#name-nested-edge-group" class="section-name selfRef">Nested Edge-Group</a>
           </h4>
-<div id="section-9.6.11-1">
+<div id="section-9.6.12-1">
 <pre class="lang-json sourcecode">
 {
   "e":
@@ -2881,18 +2975,18 @@ The default value for the operator, <code>o</code>, field is <code>AND</code>.<a
     }
   }
 }
-</pre><a href="#section-9.6.11-1" class="pilcrow">¶</a>
+</pre><a href="#section-9.6.12-1" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
 <div id="vlei-ecr-issued-by-qvi-example">
-<section id="section-9.6.12">
+<section id="section-9.6.13">
           <h4 id="name-vlei-ecr-issued-by-qvi-exam">
-<a href="#section-9.6.12" class="section-number selfRef">9.6.12. </a><a href="#name-vlei-ecr-issued-by-qvi-exam" class="section-name selfRef">vLEI ECR issued by QVI example</a>
+<a href="#section-9.6.13" class="section-number selfRef">9.6.13. </a><a href="#name-vlei-ecr-issued-by-qvi-exam" class="section-name selfRef">vLEI ECR issued by QVI example</a>
           </h4>
-<p id="section-9.6.12-1">When an ECR vLEI is issued by the QVI it is not chained, Issuer-to-Issuee, via the LE credential. A more accurate way of expressing the chaining would be to use the <code>AND</code> operator to include both the LE and QVI credentials as edges in the ECR and also to apply the unary <code>NI2I</code> to the LE credential instead of only chaining the ECR to the LE and not chaining to ECR to the QVI at all.<a href="#section-9.6.12-1" class="pilcrow">¶</a></p>
-<p id="section-9.6.12-2">In the following example: The top-level edge-block uses the default of <code>AND</code> and the <code>qvi</code> edge uses the default of <code>I2I</code> because it points to a targeted ACDC.  The <code>le</code> edge, on the other hand, points to a targeted ACDC. It uses the unary operator, <code>NI2I</code> in its operator, <code>o</code>, field so that it will be accepted it even though its targeted Issuee is not the Issuer of the current credential.<a href="#section-9.6.12-2" class="pilcrow">¶</a></p>
-<div id="section-9.6.12-3">
+<p id="section-9.6.13-1">When an ECR vLEI is issued by the QVI it is not chained, Issuer-to-Issuee, via the LE credential. A more accurate way of expressing the chaining would be to use the <code>AND</code> operator to include both the LE and QVI credentials as edges in the ECR and also to apply the unary <code>NI2I</code> to the LE credential instead of only chaining the ECR to the LE and not chaining to ECR to the QVI at all.<a href="#section-9.6.13-1" class="pilcrow">¶</a></p>
+<p id="section-9.6.13-2">In the following example: The top-level edge-block uses the default of <code>AND</code> and the <code>qvi</code> edge uses the default of <code>I2I</code> because it points to a targeted ACDC.  The <code>le</code> edge, on the other hand, points to a targeted ACDC. It uses the unary operator, <code>NI2I</code> in its operator, <code>o</code>, field so that it will be accepted it even though its targeted Issuee is not the Issuer of the current credential.<a href="#section-9.6.13-2" class="pilcrow">¶</a></p>
+<div id="section-9.6.13-3">
 <pre class="lang-json sourcecode">
 {
   "e":
@@ -2909,18 +3003,18 @@ The default value for the operator, <code>o</code>, field is <code>AND</code>.<a
     }
   }
 }
-</pre><a href="#section-9.6.12-3" class="pilcrow">¶</a>
+</pre><a href="#section-9.6.13-3" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
 <div id="commentary">
-<section id="section-9.6.13">
+<section id="section-9.6.14">
           <h4 id="name-commentary">
-<a href="#section-9.6.13" class="section-number selfRef">9.6.13. </a><a href="#name-commentary" class="section-name selfRef">Commentary</a>
+<a href="#section-9.6.14" class="section-number selfRef">9.6.14. </a><a href="#name-commentary" class="section-name selfRef">Commentary</a>
           </h4>
-<p id="section-9.6.13-1">This provides a simple but highly expressive syntax for applying (m-ary) aggregating operators to nestable groups of edges and unary operators to edges individually within those groups. This is a general approach with high expressive power. It satisfies many business logic requirements similar to that of SGL.<a href="#section-9.6.13-1" class="pilcrow">¶</a></p>
-<p id="section-9.6.13-2">Certainly, an even more expressive syntax could be developed. The proposed syntax, however, is simple, compact, has intelligent defaults, and is sufficiently general in scope to satisfy all the currently contemplated use cases.<a href="#section-9.6.13-2" class="pilcrow">¶</a></p>
-<p id="section-9.6.13-3">The intelligent defaults for the operator, <code>o</code>, field, including the default application of the  <code>I2I</code> or <code>NI2I</code> unary operator, means that in most current use cases the operator, <code>o</code>, field does not even need to be present.<a href="#section-9.6.13-3" class="pilcrow">¶</a></p>
+<p id="section-9.6.14-1">This provides a simple but highly expressive syntax for applying (m-ary) aggregating operators to nestable groups of edges and unary operators to edges individually within those groups. This is a general approach with high expressive power. It satisfies many business logic requirements similar to that of SGL.<a href="#section-9.6.14-1" class="pilcrow">¶</a></p>
+<p id="section-9.6.14-2">Certainly, an even more expressive syntax could be developed. The proposed syntax, however, is simple, compact, has intelligent defaults, and is sufficiently general in scope to satisfy all the currently contemplated use cases.<a href="#section-9.6.14-2" class="pilcrow">¶</a></p>
+<p id="section-9.6.14-3">The intelligent defaults for the operator, <code>o</code>, field, including the default application of the  <code>I2I</code> or <code>NI2I</code> unary operator, means that in most current use cases the operator, <code>o</code>, field does not even need to be present.<a href="#section-9.6.14-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -3468,20 +3562,37 @@ The default value for the operator, <code>o</code>, field is <code>AND</code>.<a
 <p id="section-13-1">As explained previously, the primary difference between <em>partial disclosure</em> and <em>selective disclosure</em> is determined by the correlatability with respect to its encompassing block after <em>full disclosure</em> of the detailed field value. A <em>partially disclosable</em> field becomes correlatable to its encompassing block after its <em>full disclosure</em>. Whereas a <em>selectively disclosable</em> field may be excluded from the <em>full disclosure</em> of any other selectively disclosable fields in its encompassing block. After selective disclosure, the selectively disclosed fields are not correlatable to the so-far undisclosed but selectively disclosable fields in the same encompassing block. In this sense, <em>full disclosure</em> means detailed disclosure of the selectively disclosed attributes not detailed disclosure of all selectively disclosable attributes.<a href="#section-13-1" class="pilcrow">¶</a></p>
 <p id="section-13-2">Recall that <em>partial</em> disclosure is an essential mechanism needed to support chain-link confidentiality <span>[<a href="#CLC" class="xref">CLC</a>]</span>. The chain-link confidentiality exchange <em>offer</em> requires <em>partial disclosure</em>, and <em>full disclosure</em> only happens after <em>acceptance</em> of the <em>offer</em>. <em>Selective</em> disclosure, on the other hand, is an essential mechanism needed to unbundle in a correlation minimizing way a single commitment by an Issuer to a bundle of fields (i.e. a nested block or array of fields). This allows separating a "stew" of "ingredients" (attributes) into its constituent "ingredients" (attributes) without correlating the constituents via the stew.<a href="#section-13-2" class="pilcrow">¶</a></p>
 <p id="section-13-3">ACDCs, as a standard, benefit from a minimally sufficient approach to selective disclosure that is simple enough to be universally implementable and adoptable. This does not preclude support for other more sophisticated but optional approaches. But the minimally sufficient approach should be universal so that at least one selective disclosure mechanism be made available in all ACDC implementations. To clarify, not all instances of an ACDC must employ the minimal selective disclosure mechanisms as described herein but all ACDC implementations must support any instance of an ACDC that employs the minimal selective disclosure mechanisms as described above.<a href="#section-13-3" class="pilcrow">¶</a></p>
-<p id="section-13-4">The ACDC chaining mechanism reduces the need for selective disclosure in some applications. Many non-ACDC verifiable credentials provide bundled precisely because there is no other way to associate the attributes in the bundle. These bundled credentials could be refactored into a graph of ACDCs. Each of which is separately disclosable and verifiable thereby obviating the need for selective disclosure. Nonetheless, some applications require bundled attributes and therefore may benefit from the independent selective disclosure of bundled attributes. This is provided by <strong><em>selectively disclosable attribute</em></strong> ACDCs.<a href="#section-13-4" class="pilcrow">¶</a></p>
-<p id="section-13-5">The use of a revocation registry is an example of a type of bundling, not of attributes in a credential, but uses of a credential in different contexts. Unbundling the usage contexts may be beneficial. This is provided by <strong><em>bulk-issued</em></strong> ACDCs.<a href="#section-13-5" class="pilcrow">¶</a></p>
-<p id="section-13-6">In either case, the basic selective disclosure mechanism is comprised of a single aggregated blinded commitment to a list of blinded commitments to undisclosed values. Membership of any blinded commitment to a value in the list of aggregated blinded commitments may be proven without leaking (disclosing) the unblinded value belonging to any other blinded commitment in the list. This enables provable selective disclosure of the unblinded values. When a non-repudiable digital signature is created on the aggregated blinded commitment then any disclosure of a given value belonging to a given blinded commitment in the list is also non-repudiable. This approach does not require any more complex cryptography than digests and digital signatures. This satisfies the design ethos of minimally sufficient means. The primary drawback of this approach is verbosity. It trades ease and simplicity and adoptability of implementation for size. Its verbosity may be mitigated by replacing the list of blinded commitments with a Merkle tree of those commitments where the Merkle tree root becomes the aggregated blinded commitment.<a href="#section-13-6" class="pilcrow">¶</a></p>
-<p id="section-13-7">Given sufficient cryptographic entropy of the blinding factors, collision resistance of the digests, and unforgeability of the digital signatures, either inclusion proof format (list or Merkle tree digest) prevents a potential disclosee or adversary from discovering in a computationally feasible way the values of any undisclosed blinded value details from the combination of the schema of those value details and either the aggregated blinded commitment and/or the list of aggregated blinded commitments <span>[<a href="#Hash" class="xref">Hash</a>]</span><span>[<a href="#HCR" class="xref">HCR</a>]</span><span>[<a href="#QCHC" class="xref">QCHC</a>]</span><span>[<a href="#Mrkl" class="xref">Mrkl</a>]</span><span>[<a href="#TwoPI" class="xref">TwoPI</a>]</span><span>[<a href="#MTSec" class="xref">MTSec</a>]</span>. A potential disclosee or adversary would also need both the blinding factor and the actual value details.<a href="#section-13-7" class="pilcrow">¶</a></p>
-<p id="section-13-8">Selective disclosure in combination with partial disclosure for chain-link confidentiality provides comprehensive correlation minimization because a discloser may use a non-disclosing metadata ACDC prior to acceptance by the disclosee of the terms of the chain-link confidentiality expressed in the rule section <span>[<a href="#CLC" class="xref">CLC</a>]</span>. Thus only malicious disclosees who violate chain-link confidentiality may correlate between independent disclosures of the value details of distinct members in the list of aggregated blinded commitments. Nonetheless, they are not able to discover any as of yet undisclosed (unblinded) value details.<a href="#section-13-8" class="pilcrow">¶</a></p>
-<div id="selectively-disclosable-attribute-acdc">
+<div id="tiered-selective-disclosure-mechanisms">
 <section id="section-13.1">
-        <h3 id="name-selectively-disclosable-attr">
-<a href="#section-13.1" class="section-number selfRef">13.1. </a><a href="#name-selectively-disclosable-attr" class="section-name selfRef">Selectively Disclosable Attribute ACDC</a>
+        <h3 id="name-tiered-selective-disclosure">
+<a href="#section-13.1" class="section-number selfRef">13.1. </a><a href="#name-tiered-selective-disclosure" class="section-name selfRef">Tiered Selective Disclosure Mechanisms</a>
         </h3>
-<p id="section-13.1-1">In a <strong><em>selectively disclosable attribute</em></strong> ACDC, the set of attributes is provided as an array of blinded blocks. Each attribute in the set has its own dedicated blinded block. Each block has its own SAID, <code>d</code>, field and UUID, <code>u</code>, field in addition to its attribute field or fields. When an attribute block has more than one attribute field then the set of fields in that block are not independently selectively disclosable but <span class="bcp14">MUST</span> be disclosed together as a set. Notable is that the field labels of the selectively disclosable attributes are also blinded because they only appear within the blinded block. This prevents un-permissioned correlation via contextualized variants of a field label that appear in a selectively disclosable block. For example, localized or internationalized variants where each variant's field label(s) each use a different language or some other context correlatable information in the field labels themselves.<a href="#section-13.1-1" class="pilcrow">¶</a></p>
-<p id="section-13.1-2">A selectively-disclosable attribute section appears at the top level using the field label <code>A</code>. This is distinct from the field label <code>a</code> for a non-selectively-disclosable attribute section. This makes clear (unambiguous) the semantics of the attribute section's associated schema. This also clearly reflects the fact that the value of a compact variant of selectively-disclosable attribute section is an "aggregate" not a SAID. As described previously, the top-level selectively-disclosable attribute aggregate section, <code>A</code>, field value is an aggregate of cryptographic commitments used to make a commitment to a set (bundle) of selectively-disclosable attributes. The derivation of its value depends on the type of selective disclosure mechanism employed. For example, the aggregate value could be the cryptographic digest of the concatenation of an ordered set of cryptographic digests, a Merkle tree root digest of an ordered set of cryptographic digests, or a cryptographic accumulator.<a href="#section-13.1-2" class="pilcrow">¶</a></p>
-<p id="section-13.1-3">The <em>Issuer</em> attribute block is absent from an uncompacted untargeted selectively disclosable ACDC as follows:<a href="#section-13.1-3" class="pilcrow">¶</a></p>
-<div id="section-13.1-4">
+<p id="section-13.1-1">The ACDC chaining mechanism reduces the need for selective disclosure in some applications. Many non-ACDC verifiable credentials provide bundled precisely because there is no other way to associate the attributes in the bundle. These bundled credentials could be refactored into a graph of ACDCs. Each of which is separately disclosable and verifiable thereby obviating the need for selective disclosure.<a href="#section-13.1-1" class="pilcrow">¶</a></p>
+<p id="section-13.1-2">Nonetheless, some applications require bundled attributes and therefore may benefit from the independent selective disclosure of bundled attributes. This is provided by <strong><em>selectively disclosable attribute</em></strong> ACDCs.<a href="#section-13.1-2" class="pilcrow">¶</a></p>
+<p id="section-13.1-3">The use of a revocation registry is an example of a type of bundling, not of attributes in a credential, but uses of a credential in different contexts. Unbundling the usage contexts may be beneficial. This is provided by <strong><em>bulk-issued</em></strong> ACDCs.<a href="#section-13.1-3" class="pilcrow">¶</a></p>
+<p id="section-13.1-4">Finally, in the case where the correlation of activity of an Issuee across contexts even when the ACDC used in those contexts is not correlatable may be addressed of a variant of bulk-issued ACDCs that have <strong><em>unique issuee AIDs</em></strong> with an independent TEL registry per issuee instance. This provides non-repudiable (recourse supporting) disclosure while protecting from the malicious correlation between second parties and other second and/or third-parties as to who (Issuee) is involved in a presentation.<a href="#section-13.1-4" class="pilcrow">¶</a></p>
+<p id="section-13.1-5">In any case, the set of selective disclosure mechanisms we call tiered selective disclosure which allows a user or implementer to better trade-off protection vs. complexity and performance. A tiered selective disclosure me<a href="#section-13.1-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="basic-selective-disclosure-mechanism">
+<section id="section-13.2">
+        <h3 id="name-basic-selective-disclosure-">
+<a href="#section-13.2" class="section-number selfRef">13.2. </a><a href="#name-basic-selective-disclosure-" class="section-name selfRef">Basic Selective Disclosure Mechanism</a>
+        </h3>
+<p id="section-13.2-1">The basic selective disclosure mechanism shared by all is comprised of a single aggregated blinded commitment to a list of blinded commitments to undisclosed values. Membership of any blinded commitment to a value in the list of aggregated blinded commitments may be proven without leaking (disclosing) the unblinded value belonging to any other blinded commitment in the list. This enables provable selective disclosure of the unblinded values. When a non-repudiable digital signature is created on the aggregated blinded commitment then any disclosure of a given value belonging to a given blinded commitment in the list is also non-repudiable. This approach does not require any more complex cryptography than digests and digital signatures. This satisfies the design ethos of minimally sufficient means. The primary drawback of this approach is verbosity. It trades ease and simplicity and <em>adoptability</em> of implementation for size. Its verbosity may be mitigated by replacing the list of blinded commitments with a Merkle tree of those commitments where the Merkle tree root becomes the aggregated blinded commitment.<a href="#section-13.2-1" class="pilcrow">¶</a></p>
+<p id="section-13.2-2">Given sufficient cryptographic entropy of the blinding factors, collision resistance of the digests, and unforgeability of the digital signatures, either inclusion proof format (list or Merkle tree digest) prevents a potential disclosee or adversary from discovering in a computationally feasible way the values of any undisclosed blinded value details from the combination of the schema of those value details and either the aggregated blinded commitment and/or the list of aggregated blinded commitments <span>[<a href="#Hash" class="xref">Hash</a>]</span><span>[<a href="#HCR" class="xref">HCR</a>]</span><span>[<a href="#QCHC" class="xref">QCHC</a>]</span><span>[<a href="#Mrkl" class="xref">Mrkl</a>]</span><span>[<a href="#TwoPI" class="xref">TwoPI</a>]</span><span>[<a href="#MTSec" class="xref">MTSec</a>]</span>. A potential disclosee or adversary would also need both the blinding factor and the actual value details.<a href="#section-13.2-2" class="pilcrow">¶</a></p>
+<p id="section-13.2-3">Selective disclosure in combination with partial disclosure for chain-link confidentiality provides comprehensive correlation minimization because a discloser may use a non-disclosing metadata ACDC prior to acceptance by the disclosee of the terms of the chain-link confidentiality expressed in the rule section <span>[<a href="#CLC" class="xref">CLC</a>]</span>. Thus only malicious disclosees who violate chain-link confidentiality may correlate between independent disclosures of the value details of distinct members in the list of aggregated blinded commitments. Nonetheless, they are not able to discover any as-of-yet undisclosed (unblinded) value details.<a href="#section-13.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="selectively-disclosable-attribute-acdc">
+<section id="section-13.3">
+        <h3 id="name-selectively-disclosable-attr">
+<a href="#section-13.3" class="section-number selfRef">13.3. </a><a href="#name-selectively-disclosable-attr" class="section-name selfRef">Selectively Disclosable Attribute ACDC</a>
+        </h3>
+<p id="section-13.3-1">In a <strong><em>selectively disclosable attribute</em></strong> ACDC, the set of attributes is provided as an array of blinded blocks. Each attribute in the set has its own dedicated blinded block. Each block has its own SAID, <code>d</code>, field and UUID, <code>u</code>, field in addition to its attribute field or fields. When an attribute block has more than one attribute field then the set of fields in that block are not independently selectively disclosable but <span class="bcp14">MUST</span> be disclosed together as a set. Notable is that the field labels of the selectively disclosable attributes are also blinded because they only appear within the blinded block. This prevents un-permissioned correlation via contextualized variants of a field label that appear in a selectively disclosable block. For example, localized or internationalized variants where each variant's field label(s) each use a different language or some other context correlatable information in the field labels themselves.<a href="#section-13.3-1" class="pilcrow">¶</a></p>
+<p id="section-13.3-2">A selectively-disclosable attribute section appears at the top level using the field label <code>A</code>. This is distinct from the field label <code>a</code> for a non-selectively-disclosable attribute section. This makes clear (unambiguous) the semantics of the attribute section's associated schema. This also clearly reflects the fact that the value of a compact variant of selectively-disclosable attribute section is an "aggregate" not a SAID. As described previously, the top-level selectively-disclosable attribute aggregate section, <code>A</code>, field value is an aggregate of cryptographic commitments used to make a commitment to a set (bundle) of selectively-disclosable attributes. The derivation of its value depends on the type of selective disclosure mechanism employed. For example, the aggregate value could be the cryptographic digest of the concatenation of an ordered set of cryptographic digests, a Merkle tree root digest of an ordered set of cryptographic digests, or a cryptographic accumulator.<a href="#section-13.3-2" class="pilcrow">¶</a></p>
+<p id="section-13.3-3">The <em>Issuee</em> attribute block is absent from an uncompacted untargeted selectively disclosable ACDC as follows:<a href="#section-13.3-3" class="pilcrow">¶</a></p>
+<div id="section-13.3-4">
 <pre class="lang-json sourcecode">
 {
   "A":
@@ -3498,10 +3609,10 @@ The default value for the operator, <code>o</code>, field is <code>AND</code>.<a
     }
   ]
 }
-</pre><a href="#section-13.1-4" class="pilcrow">¶</a>
+</pre><a href="#section-13.3-4" class="pilcrow">¶</a>
 </div>
-<p id="section-13.1-5">The <em>Issuer</em> attribute block is present in an uncompacted untargeted selectively disclosable ACDC as follows:<a href="#section-13.1-5" class="pilcrow">¶</a></p>
-<div id="section-13.1-6">
+<p id="section-13.3-5">The <em>Issuee</em> attribute block is present in an uncompacted untargeted selectively disclosable ACDC as follows:<a href="#section-13.3-5" class="pilcrow">¶</a></p>
+<div id="section-13.3-6">
 <pre class="lang-json sourcecode">
 {
   "A":
@@ -3523,27 +3634,27 @@ The default value for the operator, <code>o</code>, field is <code>AND</code>.<a
     }
   ]
 }
-</pre><a href="#section-13.1-6" class="pilcrow">¶</a>
+</pre><a href="#section-13.3-6" class="pilcrow">¶</a>
 </div>
 <div id="blinded-attribute-array">
-<section id="section-13.1.1">
+<section id="section-13.3.1">
           <h4 id="name-blinded-attribute-array">
-<a href="#section-13.1.1" class="section-number selfRef">13.1.1. </a><a href="#name-blinded-attribute-array" class="section-name selfRef">Blinded Attribute Array</a>
+<a href="#section-13.3.1" class="section-number selfRef">13.3.1. </a><a href="#name-blinded-attribute-array" class="section-name selfRef">Blinded Attribute Array</a>
           </h4>
-<p id="section-13.1.1-1">Given that each attribute block's UUID, <code>u</code>, field has sufficient cryptographic entropy, then each attribute block's SAID, <code>d</code>, field provides a secure cryptographic digest of its contents that effectively blinds the attribute value from discovery given only its Schema and SAID. To clarify, the adversary despite being given both the schema of the attribute block and its  SAID, <code>d</code>, field, is not able to discover the remaining contents of the attribute block in a computationally feasible manner such as a rainbow table attack <span>[<a href="#RB" class="xref">RB</a>]</span><span>[<a href="#DRB" class="xref">DRB</a>]</span>.  Therefore the UUID, <code>u</code>, field of each attribute block enables the associated SAID, <code>d</code>, field to securely blind the block's contents notwithstanding knowledge of the block's schema and that SAID, <code>d</code>, field.  Moreover, a cryptographic commitment to that SAID, <code>d</code>, field does not provide a fixed point of correlation to the associated attribute (SAD) field values themselves unless and until there has been specific disclosure of those field values themselves.<a href="#section-13.1.1-1" class="pilcrow">¶</a></p>
-<p id="section-13.1.1-2">Given a total of <em>N</em> elements in the attributes array, let <em>a<sub>i</sub></em> represent the SAID, <code>d</code>, field of the attribute at zero-based index <em>i</em>. More precisely the set of attributes is expressed as the ordered set,<a href="#section-13.1.1-2" class="pilcrow">¶</a></p>
-<p id="section-13.1.1-3"><em>{a<sub>i</sub> for all i in {0, ..., N-1}}</em>.<a href="#section-13.1.1-3" class="pilcrow">¶</a></p>
-<p id="section-13.1.1-4">The ordered set of <em>a<sub>i</sub></em>  may be also expressed as a list, that is,<a href="#section-13.1.1-4" class="pilcrow">¶</a></p>
-<p id="section-13.1.1-5"><em>[a<sub>0</sub>, a<sub>1</sub>, ...., a<sub>N-1</sub>]</em>.<a href="#section-13.1.1-5" class="pilcrow">¶</a></p>
+<p id="section-13.3.1-1">Given that each attribute block's UUID, <code>u</code>, field has sufficient cryptographic entropy, then each attribute block's SAID, <code>d</code>, field provides a secure cryptographic digest of its contents that effectively blinds the attribute value from discovery given only its Schema and SAID. To clarify, the adversary despite being given both the schema of the attribute block and its  SAID, <code>d</code>, field, is not able to discover the remaining contents of the attribute block in a computationally feasible manner such as a rainbow table attack <span>[<a href="#RB" class="xref">RB</a>]</span><span>[<a href="#DRB" class="xref">DRB</a>]</span>.  Therefore the UUID, <code>u</code>, field of each attribute block enables the associated SAID, <code>d</code>, field to securely blind the block's contents notwithstanding knowledge of the block's schema and that SAID, <code>d</code>, field.  Moreover, a cryptographic commitment to that SAID, <code>d</code>, field does not provide a fixed point of correlation to the associated attribute (SAD) field values themselves unless and until there has been specific disclosure of those field values themselves.<a href="#section-13.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-13.3.1-2">Given a total of <em>N</em> elements in the attributes array, let <em>a<sub>i</sub></em> represent the SAID, <code>d</code>, field of the attribute at zero-based index <em>i</em>. More precisely the set of attributes is expressed as the ordered set,<a href="#section-13.3.1-2" class="pilcrow">¶</a></p>
+<p id="section-13.3.1-3"><em>{a<sub>i</sub> for all i in {0, ..., N-1}}</em>.<a href="#section-13.3.1-3" class="pilcrow">¶</a></p>
+<p id="section-13.3.1-4">The ordered set of <em>a<sub>i</sub></em>  may be also expressed as a list, that is,<a href="#section-13.3.1-4" class="pilcrow">¶</a></p>
+<p id="section-13.3.1-5"><em>[a<sub>0</sub>, a<sub>1</sub>, ...., a<sub>N-1</sub>]</em>.<a href="#section-13.3.1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="composed-schema-for-selectively-disclosable-attribute-section">
-<section id="section-13.1.2">
+<section id="section-13.3.2">
           <h4 id="name-composed-schema-for-selecti">
-<a href="#section-13.1.2" class="section-number selfRef">13.1.2. </a><a href="#name-composed-schema-for-selecti" class="section-name selfRef">Composed Schema for Selectively Disclosable Attribute Section</a>
+<a href="#section-13.3.2" class="section-number selfRef">13.3.2. </a><a href="#name-composed-schema-for-selecti" class="section-name selfRef">Composed Schema for Selectively Disclosable Attribute Section</a>
           </h4>
-<p id="section-13.1.2-1">Because the selectively-disclosable attributes are provided by an array (list), the uncompacted variant in the schema uses an array of items and the <code>anyOf</code> composition operator to allow one or more of the items to be disclosed without requiring all to be disclosed. Thus both the <code>oneOf</code> and <code>anyOf</code> composition operators are used. The <code>oneOf</code> is used to provide compact partial disclosure of the aggregate, <em>A</em>, as the value of the top-level selectively-disclosable attribute section, <code>A</code>, field in its compact variant and the nested <code>anyOf</code> operator is used to enable selective disclosure in the uncompacted selectively-disclosable variant.<a href="#section-13.1.2-1" class="pilcrow">¶</a></p>
-<div id="section-13.1.2-2">
+<p id="section-13.3.2-1">Because the selectively-disclosable attributes are provided by an array (list), the uncompacted variant in the schema uses an array of items and the <code>anyOf</code> composition operator to allow one or more of the items to be disclosed without requiring all to be disclosed. Thus both the <code>oneOf</code> and <code>anyOf</code> composition operators are used. The <code>oneOf</code> is used to provide compact partial disclosure of the aggregate, <em>A</em>, as the value of the top-level selectively-disclosable attribute section, <code>A</code>, field in its compact variant and the nested <code>anyOf</code> operator is used to enable selective disclosure in the uncompacted selectively-disclosable variant.<a href="#section-13.3.2-1" class="pilcrow">¶</a></p>
+<div id="section-13.3.2-2">
 <pre class="breakable lang-json sourcecode">
 {
   "A":
@@ -3660,189 +3771,189 @@ The default value for the operator, <code>o</code>, field is <code>AND</code>.<a
     "additionalProperties": false
   }
 }
-</pre><a href="#section-13.1.2-2" class="pilcrow">¶</a>
+</pre><a href="#section-13.3.2-2" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
 <div id="inclusion-proof-via-aggregated-list-digest">
-<section id="section-13.1.3">
+<section id="section-13.3.3">
           <h4 id="name-inclusion-proof-via-aggrega">
-<a href="#section-13.1.3" class="section-number selfRef">13.1.3. </a><a href="#name-inclusion-proof-via-aggrega" class="section-name selfRef">Inclusion Proof via Aggregated List Digest</a>
+<a href="#section-13.3.3" class="section-number selfRef">13.3.3. </a><a href="#name-inclusion-proof-via-aggrega" class="section-name selfRef">Inclusion Proof via Aggregated List Digest</a>
           </h4>
-<p id="section-13.1.3-1">All the <em>a<sub>i</sub></em> in the list are aggregated into a single aggregate digest denoted <em>A</em> by computing the digest of their ordered concatenation. This is expressed as follows:<a href="#section-13.1.3-1" class="pilcrow">¶</a></p>
-<p id="section-13.1.3-2"><em>A = H(C(a<sub>i</sub> for all i in {0, ..., N-1}))</em> where <em>H</em> is the digest (hash) operator and <em>C</em> is the concatentation operator.<a href="#section-13.1.3-2" class="pilcrow">¶</a></p>
-<p id="section-13.1.3-3">To be explicit, using the targeted example above, let <em>a<sub>0</sub></em> denote the SAID of the <em>Issuee</em> attribute, <em>a<sub>1</sub></em> denote the SAID of the <em>score</em> attribute, and <em>a<sub>2</sub></em> denote the SAID of the <em>name</em> attribute then the aggregated digest <em>A</em> is computed as follows:<a href="#section-13.1.3-3" class="pilcrow">¶</a></p>
-<p id="section-13.1.3-4"><em>A = H(C(a<sub>0</sub>, a<sub>1</sub>, a<sub>2</sub>))</em>.<a href="#section-13.1.3-4" class="pilcrow">¶</a></p>
-<p id="section-13.1.3-5">Equivalently using <em>+</em> as the infix concatenation operator, we have,<a href="#section-13.1.3-5" class="pilcrow">¶</a></p>
-<p id="section-13.1.3-6"><em>A = H(a<sub>0</sub> + a<sub>1</sub> + a<sub>2</sub>)</em><a href="#section-13.1.3-6" class="pilcrow">¶</a></p>
-<p id="section-13.1.3-7">Given sufficient collision resistance of the digest operator, the digest of an ordered concatenation is not subject to a birthday attack on its concatenated elements <span>[<a href="#BDC" class="xref">BDC</a>]</span><span>[<a href="#BDay" class="xref">BDay</a>]</span><span>[<a href="#QCHC" class="xref">QCHC</a>]</span><span>[<a href="#HCR" class="xref">HCR</a>]</span><span>[<a href="#Hash" class="xref">Hash</a>]</span>.<a href="#section-13.1.3-7" class="pilcrow">¶</a></p>
-<p id="section-13.1.3-8">In compact form, the value of the selectively-disclosable top-level attribute section, <code>A</code>, field is set to the aggregated value <em>A</em>. This aggregate <em>A</em> makes a blinded cryptographic commitment to the all the ordered elements in the list,<a href="#section-13.1.3-8" class="pilcrow">¶</a></p>
-<p id="section-13.1.3-9"><em>[a<sub>0</sub>, a<sub>1</sub>, ...., a<sub>N-1</sub>]</em>.<a href="#section-13.1.3-9" class="pilcrow">¶</a></p>
-<p id="section-13.1.3-10">Moreover because each <em>a<sub>i</sub></em> element also makes a blinded commitment to its block's (SAD) attribute value(s), disclosure of any given <em>a<sub>i</sub></em> element does not expose or disclose any discoverable information detail about either its own or another block's attribute value(s). Therefore one may safely disclose the full list of <em>a<sub>i</sub></em> elements without exposing the blinded block attribute values.<a href="#section-13.1.3-10" class="pilcrow">¶</a></p>
-<p id="section-13.1.3-11">Proof of inclusion in the list consists of checking the list for a matching value. A computationally efficient way to do this is to create a hash table or B-tree of the list and then check for inclusion via lookup in the hash table or B-tree.<a href="#section-13.1.3-11" class="pilcrow">¶</a></p>
-<p id="section-13.1.3-12">To protect against later forgery given a later compromise of the signing keys of the Issuer, the issuer <span class="bcp14">MUST</span> anchor an issuance proof digest seal to the ACDC in its KEL. This seal binds the signing key state to the issuance. There are two cases. In the first case, an issuance/revocation registry is used. In the second case, an issuance/revocation registry is not used.<a href="#section-13.1.3-12" class="pilcrow">¶</a></p>
-<p id="section-13.1.3-13">When the ACDC is registered using an issuance/revocation TEL (Transaction Event Log) then the issuance proof seal digest is the SAID of the issuance (inception) event in the ACDC's TEL entry. The issuance event in the TEL includes the SAID of the ACDC. This binds the ACDC to the issuance proof seal in the Issuer's KEL through the TEL entry.<a href="#section-13.1.3-13" class="pilcrow">¶</a></p>
-<p id="section-13.1.3-14">When the ACDC is not registered using an issuance/revocation TEL then the issuance proof seal digest is the SAID of the ACDC itself.<a href="#section-13.1.3-14" class="pilcrow">¶</a></p>
-<p id="section-13.1.3-15">In either case, this issuance proof seal makes a verifiable binding between the issuance of the ACDC and the key state of the Issuer at the time of issuance. Because aggregated value <em>A</em> provided as the attribute section, <code>A</code>, field, value is bound to the SAID of the ACDC which is also bound to the key state via the issuance proof seal, the attribute details of each attribute block are also bound to the key state.<a href="#section-13.1.3-15" class="pilcrow">¶</a></p>
-<p id="section-13.1.3-16">The requirement of an anchored issuance proof seal means that the forger Must first successfully publish in the KEL of the issuer an inclusion proof digest seal bound to a forged ACDC. This makes any forgery attempt detectable. To elaborate, the only way to successfully publish such a seal is in a subsequent interaction event in a KEL that has not yet changed its key state via a rotation event. Whereas any KEL that has changed its key state via a rotation must be forked before the rotation. This makes the forgery attempt either both detectable and recoverable via rotation in any KEL that has not yet changed its key state or detectable as duplicity in any KEL that has changed its key state. In any event, the issuance proof seal ensures detectability of any later attempt at forgery using compromised keys.<a href="#section-13.1.3-16" class="pilcrow">¶</a></p>
-<p id="section-13.1.3-17">Given that aggregate value <em>A</em> appears as the compact value of the top-level attribute section, <code>A</code>, field, the selective disclosure of the attribute at index <em>j</em> may be proven to the disclosee with four items of information. These are:<a href="#section-13.1.3-17" class="pilcrow">¶</a></p>
+<p id="section-13.3.3-1">All the <em>a<sub>i</sub></em> in the list are aggregated into a single aggregate digest denoted <em>A</em> by computing the digest of their ordered concatenation. This is expressed as follows:<a href="#section-13.3.3-1" class="pilcrow">¶</a></p>
+<p id="section-13.3.3-2"><em>A = H(C(a<sub>i</sub> for all i in {0, ..., N-1}))</em> where <em>H</em> is the digest (hash) operator and <em>C</em> is the concatentation operator.<a href="#section-13.3.3-2" class="pilcrow">¶</a></p>
+<p id="section-13.3.3-3">To be explicit, using the targeted example above, let <em>a<sub>0</sub></em> denote the SAID of the <em>Issuee</em> attribute, <em>a<sub>1</sub></em> denote the SAID of the <em>score</em> attribute, and <em>a<sub>2</sub></em> denote the SAID of the <em>name</em> attribute then the aggregated digest <em>A</em> is computed as follows:<a href="#section-13.3.3-3" class="pilcrow">¶</a></p>
+<p id="section-13.3.3-4"><em>A = H(C(a<sub>0</sub>, a<sub>1</sub>, a<sub>2</sub>))</em>.<a href="#section-13.3.3-4" class="pilcrow">¶</a></p>
+<p id="section-13.3.3-5">Equivalently using <em>+</em> as the infix concatenation operator, we have,<a href="#section-13.3.3-5" class="pilcrow">¶</a></p>
+<p id="section-13.3.3-6"><em>A = H(a<sub>0</sub> + a<sub>1</sub> + a<sub>2</sub>)</em><a href="#section-13.3.3-6" class="pilcrow">¶</a></p>
+<p id="section-13.3.3-7">Given sufficient collision resistance of the digest operator, the digest of an ordered concatenation is not subject to a birthday attack on its concatenated elements <span>[<a href="#BDC" class="xref">BDC</a>]</span><span>[<a href="#BDay" class="xref">BDay</a>]</span><span>[<a href="#QCHC" class="xref">QCHC</a>]</span><span>[<a href="#HCR" class="xref">HCR</a>]</span><span>[<a href="#Hash" class="xref">Hash</a>]</span>.<a href="#section-13.3.3-7" class="pilcrow">¶</a></p>
+<p id="section-13.3.3-8">In compact form, the value of the selectively-disclosable top-level attribute section, <code>A</code>, field is set to the aggregated value <em>A</em>. This aggregate <em>A</em> makes a blinded cryptographic commitment to the all the ordered elements in the list,<a href="#section-13.3.3-8" class="pilcrow">¶</a></p>
+<p id="section-13.3.3-9"><em>[a<sub>0</sub>, a<sub>1</sub>, ...., a<sub>N-1</sub>]</em>.<a href="#section-13.3.3-9" class="pilcrow">¶</a></p>
+<p id="section-13.3.3-10">Moreover because each <em>a<sub>i</sub></em> element also makes a blinded commitment to its block's (SAD) attribute value(s), disclosure of any given <em>a<sub>i</sub></em> element does not expose or disclose any discoverable information detail about either its own or another block's attribute value(s). Therefore one may safely disclose the full list of <em>a<sub>i</sub></em> elements without exposing the blinded block attribute values.<a href="#section-13.3.3-10" class="pilcrow">¶</a></p>
+<p id="section-13.3.3-11">Proof of inclusion in the list consists of checking the list for a matching value. A computationally efficient way to do this is to create a hash table or B-tree of the list and then check for inclusion via lookup in the hash table or B-tree.<a href="#section-13.3.3-11" class="pilcrow">¶</a></p>
+<p id="section-13.3.3-12">To protect against later forgery given a later compromise of the signing keys of the Issuer, the issuer <span class="bcp14">MUST</span> anchor an issuance proof digest seal to the ACDC in its KEL. This seal binds the signing key state to the issuance. There are two cases. In the first case, an issuance/revocation registry is used. In the second case, an issuance/revocation registry is not used.<a href="#section-13.3.3-12" class="pilcrow">¶</a></p>
+<p id="section-13.3.3-13">When the ACDC is registered using an issuance/revocation TEL (Transaction Event Log) then the issuance proof seal digest is the SAID of the issuance (inception) event in the ACDC's TEL entry. The issuance event in the TEL includes the SAID of the ACDC. This binds the ACDC to the issuance proof seal in the Issuer's KEL through the TEL entry.<a href="#section-13.3.3-13" class="pilcrow">¶</a></p>
+<p id="section-13.3.3-14">When the ACDC is not registered using an issuance/revocation TEL then the issuance proof seal digest is the SAID of the ACDC itself.<a href="#section-13.3.3-14" class="pilcrow">¶</a></p>
+<p id="section-13.3.3-15">In either case, this issuance proof seal makes a verifiable binding between the issuance of the ACDC and the key state of the Issuer at the time of issuance. Because aggregated value <em>A</em> provided as the attribute section, <code>A</code>, field, value is bound to the SAID of the ACDC which is also bound to the key state via the issuance proof seal, the attribute details of each attribute block are also bound to the key state.<a href="#section-13.3.3-15" class="pilcrow">¶</a></p>
+<p id="section-13.3.3-16">The requirement of an anchored issuance proof seal means that the forger Must first successfully publish in the KEL of the issuer an inclusion proof digest seal bound to a forged ACDC. This makes any forgery attempt detectable. To elaborate, the only way to successfully publish such a seal is in a subsequent interaction event in a KEL that has not yet changed its key state via a rotation event. Whereas any KEL that has changed its key state via a rotation must be forked before the rotation. This makes the forgery attempt either both detectable and recoverable via rotation in any KEL that has not yet changed its key state or detectable as duplicity in any KEL that has changed its key state. In any event, the issuance proof seal ensures detectability of any later attempt at forgery using compromised keys.<a href="#section-13.3.3-16" class="pilcrow">¶</a></p>
+<p id="section-13.3.3-17">Given that aggregate value <em>A</em> appears as the compact value of the top-level attribute section, <code>A</code>, field, the selective disclosure of the attribute at index <em>j</em> may be proven to the disclosee with four items of information. These are:<a href="#section-13.3.3-17" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-13.1.3-18.1">The actual detailed disclosed attribute block itself (at index <em>j</em>) with all its fields.<a href="#section-13.1.3-18.1" class="pilcrow">¶</a>
+<li class="normal" id="section-13.3.3-18.1">The actual detailed disclosed attribute block itself (at index <em>j</em>) with all its fields.<a href="#section-13.3.3-18.1" class="pilcrow">¶</a>
 </li>
-            <li class="normal" id="section-13.1.3-18.2">The list of all attribute block digests, <em>[a<sub>0</sub>, a<sub>1</sub>, ...., a<sub>N-1</sub>]</em> that includes <em>a<sub>j</sub></em>.<a href="#section-13.1.3-18.2" class="pilcrow">¶</a>
+            <li class="normal" id="section-13.3.3-18.2">The list of all attribute block digests, <em>[a<sub>0</sub>, a<sub>1</sub>, ...., a<sub>N-1</sub>]</em> that includes <em>a<sub>j</sub></em>.<a href="#section-13.3.3-18.2" class="pilcrow">¶</a>
 </li>
-            <li class="normal" id="section-13.1.3-18.3">The ACDC in compact form with selectively-disclosable attribute section, <code>A</code>, field value set to aggregate <em>A</em>.<a href="#section-13.1.3-18.3" class="pilcrow">¶</a>
+            <li class="normal" id="section-13.3.3-18.3">The ACDC in compact form with selectively-disclosable attribute section, <code>A</code>, field value set to aggregate <em>A</em>.<a href="#section-13.3.3-18.3" class="pilcrow">¶</a>
 </li>
-            <li class="normal" id="section-13.1.3-18.4">The signature(s), <em>s</em>, of the Issuee on the ACDC's top-level SAID, <code>d</code>, field.<a href="#section-13.1.3-18.4" class="pilcrow">¶</a>
+            <li class="normal" id="section-13.3.3-18.4">The signature(s), <em>s</em>, of the Issuee on the ACDC's top-level SAID, <code>d</code>, field.<a href="#section-13.3.3-18.4" class="pilcrow">¶</a>
 </li>
           </ul>
-<p id="section-13.1.3-19">The actual detailed disclosed attribute block is only disclosed after the disclosee has agreed to the terms of the rules section. Therefore, in the event the potential disclosee declines to accept the terms of disclosure, then a presentation of the compact version of the ACDC and/or the list of attribute digests, <em>[a<sub>0</sub>, a<sub>1</sub>, ...., a<sub>N-1</sub>]</em>. does not provide any point of correlation to any of the attribute values themselves. The attributes of block <em>j</em> are hidden by <em>a<sub>j</sub></em> and the list of attribute digests <em>[a<sub>0</sub>, a<sub>1</sub>, ...., a<sub>N-1</sub>]</em> is hidden by the aggregate <em>A</em>. The partial disclosure needed to enable chain-link confidentiality does not leak any of the selectively disclosable details.<a href="#section-13.1.3-19" class="pilcrow">¶</a></p>
-<p id="section-13.1.3-20">The disclosee may then verify the disclosure by:
+<p id="section-13.3.3-19">The actual detailed disclosed attribute block is only disclosed after the disclosee has agreed to the terms of the rules section. Therefore, in the event the potential disclosee declines to accept the terms of disclosure, then a presentation of the compact version of the ACDC and/or the list of attribute digests, <em>[a<sub>0</sub>, a<sub>1</sub>, ...., a<sub>N-1</sub>]</em>. does not provide any point of correlation to any of the attribute values themselves. The attributes of block <em>j</em> are hidden by <em>a<sub>j</sub></em> and the list of attribute digests <em>[a<sub>0</sub>, a<sub>1</sub>, ...., a<sub>N-1</sub>]</em> is hidden by the aggregate <em>A</em>. The partial disclosure needed to enable chain-link confidentiality does not leak any of the selectively disclosable details.<a href="#section-13.3.3-19" class="pilcrow">¶</a></p>
+<p id="section-13.3.3-20">The disclosee may then verify the disclosure by:
 * computing <em>a<sub>j</sub></em> on the selectively disclosed attribute block details.
 * confirming that the computed <em>a<sub>j</sub></em> appears in the provided list <em>[a<sub>0</sub>, a<sub>1</sub>, ...., a<sub>N-1</sub>]</em>.
 * computing <em>A</em> from the provided list <em>[a<sub>0</sub>, a<sub>1</sub>, ...., a<sub>N-1</sub>]</em>.
 * confirming that the computed <em>A</em> matches the value, <em>A</em>, of the selectively-disclosable attribute section, <code>A</code>, field value in the provided ACDC.
 * computing the top-level SAID, <code>d</code>, field of the provided ACDC.
-* confirming the presence of the issuance seal digest in the Issuer's KEL 
+* confirming the presence of the issuance seal digest in the Issuer's KEL
 * confirming that the issuance seal digest in the Issuer's KEL is bound to the ACDC top-level SAID, <code>d</code>, field either directly or indirectly through a TEL registry entry.
-* verifying the provided signature(s) of the Issuee on the provided top-level SAID, <code>d</code> field value.<a href="#section-13.1.3-20" class="pilcrow">¶</a></p>
-<p id="section-13.1.3-21">The last 3 steps that culminate with verifying the signature(s) require determining the key state of the Issuer at the time of issuance, this may require additional verification steps as per the KERI, PTEL, and CESR-Proof protocols.<a href="#section-13.1.3-21" class="pilcrow">¶</a></p>
-<p id="section-13.1.3-22">A private selectively disclosable ACDC provides significant correlation minimization because a presenter may use a metadata ACDC prior to acceptance by the disclosee of the terms of the chain-link confidentiality expressed in the rule section <span>[<a href="#CLC" class="xref">CLC</a>]</span>. Thus only malicious disclosees who violate chain-link confidentiality may correlate between presentations of a given private selectively disclosable ACDC. Nonetheless, they are not able to discover any undisclosed attributes.<a href="#section-13.1.3-22" class="pilcrow">¶</a></p>
+* verifying the provided signature(s) of the Issuee on the provided top-level SAID, <code>d</code> field value.<a href="#section-13.3.3-20" class="pilcrow">¶</a></p>
+<p id="section-13.3.3-21">The last 3 steps that culminate with verifying the signature(s) require determining the key state of the Issuer at the time of issuance, this may require additional verification steps as per the KERI, PTEL, and CESR-Proof protocols.<a href="#section-13.3.3-21" class="pilcrow">¶</a></p>
+<p id="section-13.3.3-22">A private selectively disclosable ACDC provides significant correlation minimization because a presenter may use a metadata ACDC prior to acceptance by the disclosee of the terms of the chain-link confidentiality expressed in the rule section <span>[<a href="#CLC" class="xref">CLC</a>]</span>. Thus only malicious disclosees who violate chain-link confidentiality may correlate between presentations of a given private selectively disclosable ACDC. Nonetheless, they are not able to discover any undisclosed attributes.<a href="#section-13.3.3-22" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="inclusion-proof-via-merkle-tree-root-digest">
-<section id="section-13.1.4">
+<section id="section-13.3.4">
           <h4 id="name-inclusion-proof-via-merkle-">
-<a href="#section-13.1.4" class="section-number selfRef">13.1.4. </a><a href="#name-inclusion-proof-via-merkle-" class="section-name selfRef">Inclusion Proof via Merkle Tree Root Digest</a>
+<a href="#section-13.3.4" class="section-number selfRef">13.3.4. </a><a href="#name-inclusion-proof-via-merkle-" class="section-name selfRef">Inclusion Proof via Merkle Tree Root Digest</a>
           </h4>
-<p id="section-13.1.4-1">The inclusion proof via aggregated list may be somewhat verbose when there are a large number of attribute blocks in the selectively disclosable attribute section. A more efficient approach is to create a Merkle tree of the attribute block digests and let the aggregate, <em>A</em>, be the Merkle tree root digest <span>[<a href="#Mrkl" class="xref">Mrkl</a>]</span>. Specifically, set the value of the top-level selectively-disclosable attribute section, <code>A</code>, field to the aggregate, <em>A</em> whose value is the Merkle tree root digest <span>[<a href="#Mrkl" class="xref">Mrkl</a>]</span>.<a href="#section-13.1.4-1" class="pilcrow">¶</a></p>
-<p id="section-13.1.4-2">The Merkle tree needs to have appropriate second-pre-image attack protection of interior branch nodes <span>[<a href="#TwoPI" class="xref">TwoPI</a>]</span><span>[<a href="#MTSec" class="xref">MTSec</a>]</span>. The discloser then only needs to provide a subset of digests from the Merkle tree to prove that a given digest, <em>a<sub>j</sub></em> contributed to the Merkle tree root digest, <em>A</em>. For ACDCs with a small number of attributes the added complexity of the Merkle tree approach may not be worth the savings in verbosity.<a href="#section-13.1.4-2" class="pilcrow">¶</a></p>
+<p id="section-13.3.4-1">The inclusion proof via aggregated list may be somewhat verbose when there are a large number of attribute blocks in the selectively disclosable attribute section. A more efficient approach is to create a Merkle tree of the attribute block digests and let the aggregate, <em>A</em>, be the Merkle tree root digest <span>[<a href="#Mrkl" class="xref">Mrkl</a>]</span>. Specifically, set the value of the top-level selectively-disclosable attribute section, <code>A</code>, field to the aggregate, <em>A</em> whose value is the Merkle tree root digest <span>[<a href="#Mrkl" class="xref">Mrkl</a>]</span>.<a href="#section-13.3.4-1" class="pilcrow">¶</a></p>
+<p id="section-13.3.4-2">The Merkle tree needs to have appropriate second-pre-image attack protection of interior branch nodes <span>[<a href="#TwoPI" class="xref">TwoPI</a>]</span><span>[<a href="#MTSec" class="xref">MTSec</a>]</span>. The discloser then only needs to provide a subset of digests from the Merkle tree to prove that a given digest, <em>a<sub>j</sub></em> contributed to the Merkle tree root digest, <em>A</em>. For ACDCs with a small number of attributes the added complexity of the Merkle tree approach may not be worth the savings in verbosity.<a href="#section-13.3.4-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="hierarchical-derivation-at-issuance-of-selectively-disclosable-attribute-acdcs">
-<section id="section-13.1.5">
+<section id="section-13.3.5">
           <h4 id="name-hierarchical-derivation-at-">
-<a href="#section-13.1.5" class="section-number selfRef">13.1.5. </a><a href="#name-hierarchical-derivation-at-" class="section-name selfRef">Hierarchical Derivation at Issuance of Selectively Disclosable Attribute ACDCs</a>
+<a href="#section-13.3.5" class="section-number selfRef">13.3.5. </a><a href="#name-hierarchical-derivation-at-" class="section-name selfRef">Hierarchical Derivation at Issuance of Selectively Disclosable Attribute ACDCs</a>
           </h4>
-<p id="section-13.1.5-1">The amount of data transferred between the Issuer and Issuee (or recipient in the case of an untargeted ACDC) at issuance of a selectively disclosable attribute ACDC may be minimized by using a hierarchical deterministic derivation function to derive the value of the UUDI, <code>u</code>, fields from a shared secret salt <span>[<a href="#Salt" class="xref">Salt</a>]</span>.<a href="#section-13.1.5-1" class="pilcrow">¶</a></p>
-<p id="section-13.1.5-2">There are several ways that the Issuer may securely share that secret salt. Given that an Ed25519 key pair(s) controls each of the Issuer and Issuee  AIDs, (or recipient AID in the case of an untargeted ACDC) a corresponding X15519 asymmetric encryption key pair(s) may be derived from each controlling Ed25519 key pair(s) <span>[<a href="#EdSC" class="xref">EdSC</a>]</span><span>[<a href="#PSEd" class="xref">PSEd</a>]</span><span>[<a href="#TMEd" class="xref">TMEd</a>]</span><span>[<a href="#SKEM" class="xref">SKEM</a>]</span>. An X25519 public key may be securely derived from an Ed25519 public key <span>[<a href="#KeyEx" class="xref">KeyEx</a>]</span><span>[<a href="#SKEM" class="xref">SKEM</a>]</span>. Likewise, an X25519 private key may be securely derived from an Ed25519 private key <span>[<a href="#KeyEx" class="xref">KeyEx</a>]</span><span>[<a href="#SKEM" class="xref">SKEM</a>]</span>.<a href="#section-13.1.5-2" class="pilcrow">¶</a></p>
-<p id="section-13.1.5-3">In an interactive approach, the Issuer derives a public asymmetric X25519 encryption key from the Issuee's published Ed25519 public key and the Issuee derives a public asymmetric X25519 encryption key from the Issuer's published Ed25519 public key. The two then interact via a Diffie-Hellman (DH) key exchange to create a shared symmetric encryption key <span>[<a href="#KeyEx" class="xref">KeyEx</a>]</span><span>[<a href="#DHKE" class="xref">DHKE</a>]</span>. The shared symmetric encryption key may be used to encrypt the secret salt or the shared symmetric encryption key itself may be used has high entropy cryptographic material from which the secret salt may be derived.<a href="#section-13.1.5-3" class="pilcrow">¶</a></p>
-<p id="section-13.1.5-4">In a non-interactive approach, the Issuer derives an X25519 asymmetric public encryption key from the Issuee's (recipient's) public Ed25519 public key. The Issuer then encrypts the secret salt with that public asymmetric encryption key and signs the encryption with the Issuer's private Ed25519 signing key. This is transmitted to the Issuee, who verifies the signature and decrypts the secret salt using the private X25519 decryption key derived from the Issuee's private Ed25519 key. This non-interactive approach is more scalable for AIDs that are controlled with a multi-sig group of signing keys. The Issuer can broadcast to all members of the Issuee's (or recipient's) multi-sig signing group individually asymmetrically encrypted and signed copies of the secret salt.<a href="#section-13.1.5-4" class="pilcrow">¶</a></p>
-<p id="section-13.1.5-5">In addition to the secret salt, the Issuer provides to the Issuee (recipient) a template of the ACDC but with empty UUID, <code>u</code>, and SAID, <code>d</code>, fields in each block with such fields. Each UUID, <code>u</code>, field value is then derived from the shared salt with a path prefix that indexes a specific block. Given the UUID, <code>u</code>, field value, the SAID, <code>d</code>, field value may then be derived. Likewise, both compact and uncompacted versions of the ACDC may then be generated. The derivation path for the top-level UUID, <code>u</code>, field (for private ACDCS), is the string "0" and derivation path the the the zeroth indexed attribute in the attributes array is the string "0/0". Likewise, the next attribute's derivation path is the string "0/1" and so forth.<a href="#section-13.1.5-5" class="pilcrow">¶</a></p>
-<p id="section-13.1.5-6">In addition to the shared salt and ACDC template, the Issuer also provides its signature(s) on its own generated compact version ACDC. The Issuer may also provide references to the anchoring issuance proof seals. Everything else an Issuee (recipient) needs to make a verifiable presentation/disclosure can be computed at the time of presentation/disclosure by the Issuee.<a href="#section-13.1.5-6" class="pilcrow">¶</a></p>
+<p id="section-13.3.5-1">The amount of data transferred between the Issuer and Issuee (or recipient in the case of an untargeted ACDC) at issuance of a selectively disclosable attribute ACDC may be minimized by using a hierarchical deterministic derivation function to derive the value of the UUDI, <code>u</code>, fields from a shared secret salt <span>[<a href="#Salt" class="xref">Salt</a>]</span>.<a href="#section-13.3.5-1" class="pilcrow">¶</a></p>
+<p id="section-13.3.5-2">There are several ways that the Issuer may securely share that secret salt. Given that an Ed25519 key pair(s) controls each of the Issuer and Issuee  AIDs, (or recipient AID in the case of an untargeted ACDC) a corresponding X15519 asymmetric encryption key pair(s) may be derived from each controlling Ed25519 key pair(s) <span>[<a href="#EdSC" class="xref">EdSC</a>]</span><span>[<a href="#PSEd" class="xref">PSEd</a>]</span><span>[<a href="#TMEd" class="xref">TMEd</a>]</span><span>[<a href="#SKEM" class="xref">SKEM</a>]</span>. An X25519 public key may be securely derived from an Ed25519 public key <span>[<a href="#KeyEx" class="xref">KeyEx</a>]</span><span>[<a href="#SKEM" class="xref">SKEM</a>]</span>. Likewise, an X25519 private key may be securely derived from an Ed25519 private key <span>[<a href="#KeyEx" class="xref">KeyEx</a>]</span><span>[<a href="#SKEM" class="xref">SKEM</a>]</span>.<a href="#section-13.3.5-2" class="pilcrow">¶</a></p>
+<p id="section-13.3.5-3">In an interactive approach, the Issuer derives a public asymmetric X25519 encryption key from the Issuee's published Ed25519 public key and the Issuee derives a public asymmetric X25519 encryption key from the Issuer's published Ed25519 public key. The two then interact via a Diffie-Hellman (DH) key exchange to create a shared symmetric encryption key <span>[<a href="#KeyEx" class="xref">KeyEx</a>]</span><span>[<a href="#DHKE" class="xref">DHKE</a>]</span>. The shared symmetric encryption key may be used to encrypt the secret salt or the shared symmetric encryption key itself may be used has high entropy cryptographic material from which the secret salt may be derived.<a href="#section-13.3.5-3" class="pilcrow">¶</a></p>
+<p id="section-13.3.5-4">In a non-interactive approach, the Issuer derives an X25519 asymmetric public encryption key from the Issuee's (recipient's) public Ed25519 public key. The Issuer then encrypts the secret salt with that public asymmetric encryption key and signs the encryption with the Issuer's private Ed25519 signing key. This is transmitted to the Issuee, who verifies the signature and decrypts the secret salt using the private X25519 decryption key derived from the Issuee's private Ed25519 key. This non-interactive approach is more scalable for AIDs that are controlled with a multi-sig group of signing keys. The Issuer can broadcast to all members of the Issuee's (or recipient's) multi-sig signing group individually asymmetrically encrypted and signed copies of the secret salt.<a href="#section-13.3.5-4" class="pilcrow">¶</a></p>
+<p id="section-13.3.5-5">In addition to the secret salt, the Issuer provides to the Issuee (recipient) a template of the ACDC but with empty UUID, <code>u</code>, and SAID, <code>d</code>, fields in each block with such fields. Each UUID, <code>u</code>, field value is then derived from the shared salt with a path prefix that indexes a specific block. Given the UUID, <code>u</code>, field value, the SAID, <code>d</code>, field value may then be derived. Likewise, both compact and uncompacted versions of the ACDC may then be generated. The derivation path for the top-level UUID, <code>u</code>, field (for private ACDCS), is the string "0" and derivation path the the the zeroth indexed attribute in the attributes array is the string "0/0". Likewise, the next attribute's derivation path is the string "0/1" and so forth.<a href="#section-13.3.5-5" class="pilcrow">¶</a></p>
+<p id="section-13.3.5-6">In addition to the shared salt and ACDC template, the Issuer also provides its signature(s) on its own generated compact version ACDC. The Issuer may also provide references to the anchoring issuance proof seals. Everything else an Issuee (recipient) needs to make a verifiable presentation/disclosure can be computed at the time of presentation/disclosure by the Issuee.<a href="#section-13.3.5-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
 <div id="bulk-issued-private-acdcs">
-<section id="section-13.2">
+<section id="section-13.4">
         <h3 id="name-bulk-issued-private-acdcs">
-<a href="#section-13.2" class="section-number selfRef">13.2. </a><a href="#name-bulk-issued-private-acdcs" class="section-name selfRef">Bulk-Issued Private ACDCs</a>
+<a href="#section-13.4" class="section-number selfRef">13.4. </a><a href="#name-bulk-issued-private-acdcs" class="section-name selfRef">Bulk-Issued Private ACDCs</a>
         </h3>
-<p id="section-13.2-1">The purpose of bulk issuance is to enable the Issuee to use unique ACDC more efficiently SAIDs to isolate and minimize correlation across different usage contexts of essentially the same ACDC while allowing public commitments to the ACDC SAIDs. A private ACDC may be issued in bulk as a set. In its basic form, the only difference between each ACDC is the top-level SAID, <em>d</em>, and UUID, <em>u</em> field values. To elaborate, bulk issuance enables the use of un-correlatable copies while minimizing the associated data transfer and storage requirements. Essentially each copy (member) of a bulk issued ACDC set shares a template that both the Issuer and Issuee use to generate a given ACDC in that set without requiring that the Issuer and Issuee exchange and store a unique copy of each member of the set independently. This minimizes the data transfer and storage requirements for both the Issuer and the Issuee.<a href="#section-13.2-1" class="pilcrow">¶</a></p>
-<p id="section-13.2-2">An ACDC provenance chain is connected via references to the SAIDs given by the top-level SAID, <code>d</code>, fields of the ACDCs in that chain.  A given ACDC thereby makes commitments to other ACDCs. Expressed another way, an ACDC may be a node in a directed graph of ACDCs. Each directed edge in that graph emanating from one ACDC includes a reference to the SAID of some other connected ACDC. These edges provide points of correlation to an ACDC via their SAID reference. Private bulk issued ACDCs enable the Issuee to control better the correlatability of presentations using different presentation strategies.<a href="#section-13.2-2" class="pilcrow">¶</a></p>
-<p id="section-13.2-3">For example, the Issuee could use one copy of a bulk-issued private ACDC per presentation even to the same verifier. This strategy would consume the most copies. It is essentially a one-time-use ACDC strategy. Alternatively, the Issuee could use the same copy for all presentations to the same verifier and thereby only permit the verifier to correlate between presentations it received directly but not between other verifiers. This limits the consumption to one copy per verifier. In yet another alternative, the Issuee could use one copy for all presentations in a given context with a group of verifiers, thereby only permitting correlation among that group.<a href="#section-13.2-3" class="pilcrow">¶</a></p>
-<p id="section-13.2-4">In this context, we are talking about permissioned correlation. Any verifier that has received a complete presentation of a private ACDC has access to all the fields disclosed by the presentation but the terms of the chain-link confidentiality agreement may forbid sharing those field values outside a given context. Thus an Issuee may use a combination of bulk issued ACDCs with chain-link confidentiality to control permissioned correlation of the contents of an ACDC while allowing the SAID of the ACDC to be more public. The SAID of a private ACDC does not expose the ACDC contents to an un-permissioned third party. Unique SAIDs belonging to bulk issued ACDCs prevent third parties from making a provable correlation between ACDCs via their SAIDs in spite of those SAIDs being public. This does not stop malicious verifiers (as second parties) from colluding and correlating against the disclosed fields but it does limit provable correlation to the information disclosed to a given group of malicious colluding verifiers. To restate unique SAIDs per copy of a set of private bulk issued ACDC prevent un-permissioned third parties from making provable correlations in spite of those SAIDs being public unless they collude with malicious verifiers (second parties).<a href="#section-13.2-4" class="pilcrow">¶</a></p>
-<p id="section-13.2-5">In some applications, chain-link-confidentiality is insufficient to deter un-permissioned correlation. Some verifiers may be malicious with sufficient malicious incentives to overcome whatever counter incentives the terms of the contractual chain-link confidentiality may impose. In these cases, more aggressive technological anti-correlation mechanisms such as bulk issued ACDCs may be useful. To elaborate, in spite of the fact that chain-link confidentiality terms of use may forbid such malicious correlation, making such correlation more difficult technically may provide better protection than chain-link confidentiality alone [[41]].<a href="#section-13.2-5" class="pilcrow">¶</a></p>
-<p id="section-13.2-6">It is important to note that any group of colluding malicious verifiers may always make a statistical correlation between presentations despite technical barriers to cryptographically provable correlation. In general, there is no cryptographic mechanism that precludes statistical correlation among a set of colluding verifiers because they may make cryptographically unverifiable or unprovable assertions about information presented to them that may be proven as likely true using merely statistical correlation techniques.<a href="#section-13.2-6" class="pilcrow">¶</a></p>
+<p id="section-13.4-1">The purpose of bulk issuance is to enable the Issuee to use unique ACDC more efficiently SAIDs to isolate and minimize correlation across different usage contexts of essentially the same ACDC while allowing public commitments to the ACDC SAIDs. A private ACDC may be issued in bulk as a set. In its basic form, the only difference between each ACDC is the top-level SAID, <em>d</em>, and UUID, <em>u</em> field values. To elaborate, bulk issuance enables the use of un-correlatable copies while minimizing the associated data transfer and storage requirements. Essentially each copy (member) of a bulk issued ACDC set shares a template that both the Issuer and Issuee use to generate a given ACDC in that set without requiring that the Issuer and Issuee exchange and store a unique copy of each member of the set independently. This minimizes the data transfer and storage requirements for both the Issuer and the Issuee.<a href="#section-13.4-1" class="pilcrow">¶</a></p>
+<p id="section-13.4-2">An ACDC provenance chain is connected via references to the SAIDs given by the top-level SAID, <code>d</code>, fields of the ACDCs in that chain.  A given ACDC thereby makes commitments to other ACDCs. Expressed another way, an ACDC may be a node in a directed graph of ACDCs. Each directed edge in that graph emanating from one ACDC includes a reference to the SAID of some other connected ACDC. These edges provide points of correlation to an ACDC via their SAID reference. Private bulk issued ACDCs enable the Issuee to control better the correlatability of presentations using different presentation strategies.<a href="#section-13.4-2" class="pilcrow">¶</a></p>
+<p id="section-13.4-3">For example, the Issuee could use one copy of a bulk-issued private ACDC per presentation even to the same verifier. This strategy would consume the most copies. It is essentially a one-time-use ACDC strategy. Alternatively, the Issuee could use the same copy for all presentations to the same verifier and thereby only permit the verifier to correlate between presentations it received directly but not between other verifiers. This limits the consumption to one copy per verifier. In yet another alternative, the Issuee could use one copy for all presentations in a given context with a group of verifiers, thereby only permitting correlation among that group.<a href="#section-13.4-3" class="pilcrow">¶</a></p>
+<p id="section-13.4-4">In this context, we are talking about permissioned correlation. Any verifier that has received a complete presentation of a private ACDC has access to all the fields disclosed by the presentation but the terms of the chain-link confidentiality agreement may forbid sharing those field values outside a given context. Thus an Issuee may use a combination of bulk issued ACDCs with chain-link confidentiality to control permissioned correlation of the contents of an ACDC while allowing the SAID of the ACDC to be more public. The SAID of a private ACDC does not expose the ACDC contents to an un-permissioned third party. Unique SAIDs belonging to bulk issued ACDCs prevent third parties from making a provable correlation between ACDCs via their SAIDs in spite of those SAIDs being public. This does not stop malicious verifiers (as second parties) from colluding and correlating against the disclosed fields but it does limit provable correlation to the information disclosed to a given group of malicious colluding verifiers. To restate unique SAIDs per copy of a set of private bulk issued ACDC prevent un-permissioned third parties from making provable correlations in spite of those SAIDs being public unless they collude with malicious verifiers (second parties).<a href="#section-13.4-4" class="pilcrow">¶</a></p>
+<p id="section-13.4-5">In some applications, chain-link-confidentiality is insufficient to deter un-permissioned correlation. Some verifiers may be malicious with sufficient malicious incentives to overcome whatever counter incentives the terms of the contractual chain-link confidentiality may impose. In these cases, more aggressive technological anti-correlation mechanisms such as bulk issued ACDCs may be useful. To elaborate, in spite of the fact that chain-link confidentiality terms of use may forbid such malicious correlation, making such correlation more difficult technically may provide better protection than chain-link confidentiality alone [[41]].<a href="#section-13.4-5" class="pilcrow">¶</a></p>
+<p id="section-13.4-6">It is important to note that any group of colluding malicious verifiers may always make a statistical correlation between presentations despite technical barriers to cryptographically provable correlation. In general, there is no cryptographic mechanism that precludes statistical correlation among a set of colluding verifiers because they may make cryptographically unverifiable or unprovable assertions about information presented to them that may be proven as likely true using merely statistical correlation techniques.<a href="#section-13.4-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="basic-bulk-issuance">
-<section id="section-13.3">
+<section id="section-13.5">
         <h3 id="name-basic-bulk-issuance">
-<a href="#section-13.3" class="section-number selfRef">13.3. </a><a href="#name-basic-bulk-issuance" class="section-name selfRef">Basic Bulk Issuance</a>
+<a href="#section-13.5" class="section-number selfRef">13.5. </a><a href="#name-basic-bulk-issuance" class="section-name selfRef">Basic Bulk Issuance</a>
         </h3>
-<p id="section-13.3-1">The amount of data transferred between the Issuer and Issuee (or recipient of an untargeted ACDC) at issuance of a set of bulk issued ACDCs may be minimized by using a hierarchical deterministic derivation function to derive the value of the UUID, <code>u</code>, fields from a shared secret salt <span>[<a href="#Salt" class="xref">Salt</a>]</span>.<a href="#section-13.3-1" class="pilcrow">¶</a></p>
-<p id="section-13.3-2">As described above, there are several ways that the Issuer may securely share a secret salt. Given that the Issuer and Issuee (or recipient when untargeted) AIDs are each controlled by an Ed25519 key pair(s), a corresponding X15519 asymmetric encryption key pair(s) may be derived from the controlling Ed25519 key pair(s) <span>[<a href="#EdSC" class="xref">EdSC</a>]</span><span>[<a href="#PSEd" class="xref">PSEd</a>]</span><span>[<a href="#TMEd" class="xref">TMEd</a>]</span>. An X25519 public key may be securely derived from an Ed25519 public key <span>[<a href="#KeyEx" class="xref">KeyEx</a>]</span><span>[<a href="#SKEM" class="xref">SKEM</a>]</span>. Likewise, an X25519 private key may be securely derived from an Ed25519 private key <span>[<a href="#KeyEx" class="xref">KeyEx</a>]</span><span>[<a href="#SKEM" class="xref">SKEM</a>]</span>.<a href="#section-13.3-2" class="pilcrow">¶</a></p>
-<p id="section-13.3-3">In an interactive approach, the Issuer derives a public asymmetric X25519 encryption key from the Issuee's published Ed25519 public key and the Issuee derives a public asymmetric X25519 encryption key from the Issuer's published Ed25519 public key. The two then interact via a Diffie-Hellman (DH) key exchange to create a shared symmetric encryption key <span>[<a href="#KeyEx" class="xref">KeyEx</a>]</span><span>[<a href="#DHKE" class="xref">DHKE</a>]</span>. The shared symmetric encryption key may be used to encrypt the secret salt or the shared symmetric encryption key itself may be used has high entropy cryptographic material from which the secret salt may be derived.<a href="#section-13.3-3" class="pilcrow">¶</a></p>
-<p id="section-13.3-4">In a non-interactive approach, the Issuer derives an X25519 asymmetric public encryption key from the Issuee's (or recipient's) public Ed25519 public key. The Issuer then encrypts the secret salt with that public asymmetric encryption key and signs the encryption with the Issuer's private Ed25519 signing key. This is transmitted to the Issuee, who verifies the signature and decrypts the secret salt using the private X25519 decryption key derived from the Issuee's private Ed25519 key. This non-interactive approach is more scalable for AIDs that are controlled with a multi-sig group of signing keys. The Issuer can broadcast to all members of the Issuee's (or recipient's) multi-sig signing group individually asymmetrically encrypted and signed copies of the secret salt.<a href="#section-13.3-4" class="pilcrow">¶</a></p>
-<p id="section-13.3-5">In addition to the secret salt, the Issuer also provides a template of the private ACDC but with empty UUID, <code>u</code>, and SAID, <code>d</code>, fields at the top-level of each nested block with such fields. Each UUID, <code>u</code>, field value is then derived from the shared salt with a deterministic path prefix that indexes both its membership in the bulk issued set and its location in the ACDC. Given the UUID, <code>u</code>, field value, the associated SAID, <code>d</code>, field value may then be derived. Likewise, both full and compact versions of the ACDC may then be generated. This generation is analogous to that described in the section for selective disclosure ACDCs but extended to a set of private ACDCs.<a href="#section-13.3-5" class="pilcrow">¶</a></p>
-<p id="section-13.3-6">The initial element in each deterministic derivation path is the string value of the bulk-issued member's copy index <em>k</em>, such as "0", "1", "2" etc.  Specifically, if <em>k</em> denotes the index of an ordered set of bulk issued private ACDCs of size <em>M</em>, the derivation path starts with the string <em>"k"</em> where <em>k</em> is replaced with the decimal or hexadecimal textual representation of the numeric index <em>k</em>. Furthermore, a bulk-issued private ACDC with a private attribute section uses <em>"k"</em> to derive its top-level UUID and <em>"k/0"</em> to derive its attribute section UUID. This hierarchical path is extended to any nested private attribute blocks. This approach is further extended to enable bulk issued selective disclosure ACDCs by using a similar hierarchical derivation path for the UUID field value in each of the selectively disclosable blocks in the array of attributes. For example, the path <em>"k/j"</em> is used to generate the UUID of attribute index <em>j</em> at bulk-issued ACDC index <em>k</em>.<a href="#section-13.3-6" class="pilcrow">¶</a></p>
-<p id="section-13.3-7">In addition to the shared salt and ACDC template, the Issuer also provides a list of signatures of SAIDs, one for each SAID of each copy of the associated compact bulk-issued ACDC.  The Issuee (or recipient) can generate on-demand each compact or uncompacted ACDC from the template, the salt, and its index <em>k</em>. The Issuee does not need to store a copy of each bulk issued ACDC, merely the template, the salt, and the list of signatures.<a href="#section-13.3-7" class="pilcrow">¶</a></p>
-<p id="section-13.3-8">The Issuer <span class="bcp14">MUST</span> also anchor in its KEL an issuance proof digest seal of the set of bulk issued ACDCs. The issuance proof digest seal makes a cryptographic commitment to the set of top-level SAIDS belonging to the bulk issued ACDCs. This protects against later forgery of ACDCs in the event the Issuer's signing keys become compromised.  A later attempt at forgery requires a new event or new version of an event that includes a new anchoring issuance proof digest seal that makes a cryptographic commitment to the set of newly forged ACDC SAIDS. This new anchoring event of the forgery is therefore detectable.<a href="#section-13.3-8" class="pilcrow">¶</a></p>
-<p id="section-13.3-9">Similarly, to the process of generating a selective disclosure attribute ACDC, the issuance proof digest is an aggregate that is aggregated from all members in the bulk-issued set of ACDCs. The complication of this approach is that it must be done in such a way as to not enable provable correlation by a third party of the actual SAIDS of the bulk-issued set of ACDCs. Therefore the actual SAIDs must not be aggregated but blinded commitments to those SAIDs instead. With blinded commitments, knowledge of any or all members of such a set does not disclose the membership of any SAID unless and until it is unblinded. Recall that the purpose of bulk issuance is to allow the SAID of an ACDC in a bulk issued set to be used publicly without correlating it in an un-permissioned provable way to the SAIDs of the other members.<a href="#section-13.3-9" class="pilcrow">¶</a></p>
-<p id="section-13.3-10">The basic approach is to compute the aggregate denoted, <em>B</em>, as the digest of the concatenation of a set of blinded digests of bulk issued ACDC SAIDS. Each ACDC SAID is first blinded via concatenation to a UUID (salty nonce) and then the digest of that concatenation is concatenated with the other blinded SAID digests. Finally, a digest of that concatenation provides the aggregate.<a href="#section-13.3-10" class="pilcrow">¶</a></p>
-<p id="section-13.3-11">Suppose there are <em>M</em> ACDCs in a bulk issued set. Using zero-based indexing for each member of the bulk issued set of ACDCs, such that index <em>k</em> satisfies <em>k in {0, ..., M-1}, let *d<sub>k</sub></em> denote the top-level SAID of an ACDC in an ordered set of bulk-issued ACDCs. Let <em>v<sub>k</sub></em> denote the UUID (salty nonce) or blinding factor that is used to blind that said. The blinding factor, <em>v<sub>k</sub></em>, is NOT the top-level UUID, <code>u</code>, field of the ACDC itself but an entirely different UUID used to blind the ACDC's SAID for the purpose of aggregation. The derivation path for <em>v<sub>k</sub></em> from the shared secret salt is <em>"k."</em> where <em>k</em> is the index of the bulk-issued ACDC.<a href="#section-13.3-11" class="pilcrow">¶</a></p>
-<p id="section-13.3-12">Let <em>c<sub>k</sub> = v<sub>k</sub> + d<sub>k</sub></em>,  denote the blinding concatenation where <em>+</em> is the infix concatenation operator.<br>
-Then the blinded digest, <em>b<sub>k</sub></em>, is given by,<br>
-          <em>b<sub>k</sub> = H(c<sub>k</sub>) = H(v<sub>k</sub> + d<sub>k</sub>)</em>, <br>
-where <em>H</em> is the digest operator.<a href="#section-13.3-12" class="pilcrow">¶</a></p>
-<p id="section-13.3-13">The aggregation of blinded digests, <em>B</em>, is given by,<br>
-          <em>B = H(C(b<sub>k</sub> for all k in {0, ..., M-1}))</em>, <br>
-where <em>C</em> is the concatenation operator and <em>H</em> is the digest operator. This aggregate, <em>B</em>, provides the issuance proof digest.<a href="#section-13.3-13" class="pilcrow">¶</a></p>
-<p id="section-13.3-14">The aggregate, <em>B</em>, makes a blinded cryptographic commitment to the ordered elements in the list
-<em>[b<sub>0</sub>, b<sub>1</sub>, ...., b<sub>M-1</sub>]</em>. A commitment to <em>B</em> is a commitment to all the <em>b<sub>k</sub></em> and hence all the d<sub>k</sub>.<a href="#section-13.3-14" class="pilcrow">¶</a></p>
-<p id="section-13.3-15">Given sufficient collision resistance of the digest operator, the digest of an ordered concatenation is not subject to a birthday attack on its concatenated elements <span>[<a href="#BDC" class="xref">BDC</a>]</span><span>[<a href="#BDay" class="xref">BDay</a>]</span><span>[<a href="#QCHC" class="xref">QCHC</a>]</span><span>[<a href="#HCR" class="xref">HCR</a>]</span><span>[<a href="#Hash" class="xref">Hash</a>]</span>.<a href="#section-13.3-15" class="pilcrow">¶</a></p>
-<p id="section-13.3-16">Disclosure of any given <em>b<sub>k</sub></em> element does not expose or disclose any discoverable information detail about either the SAID of its associated ACDC or any other ACDC's SAID. Therefore one may safely disclose the full list of <em>b<sub>k</sub></em> elements without exposing the blinded bulk issued SAID values, d<sub>k</sub>.<a href="#section-13.3-16" class="pilcrow">¶</a></p>
-<p id="section-13.3-17">Proof of inclusion in the list of blinded digests consists of checking the list for a matching value. A computationally efficient way to do this is to create a hash table or B-tree of the list and then check for inclusion via lookup in the hash table or B-tree.<a href="#section-13.3-17" class="pilcrow">¶</a></p>
-<p id="section-13.3-18">A proof of inclusion of an ACDC in a bulk-issued set requires disclosure of <em>v<sub>k</sub></em> which is only disclosed after the disclosee has accepted (agreed to) the terms of the rule section. Therefore, in the event the <em>Disclosee</em> declines to accept the terms of disclosure, then a presentation/disclosure of the compact version of the ACDC does not provide any point of correlation to any other SAID of any other ACDC from the bulk set that contributes to the aggregate <em>B</em>. In addition, because the other SAIDs are hidden by each <em>b<sub>k</sub></em> inside the aggregate, <em>B</em>, even a presentation/disclosure of,<br>
-          <em>[b<sub>0</sub>, b<sub>1</sub>, ...., b<sub>M-1</sub>]</em> <br>
-does not provide any point of correlation to the actual bulk-issued ACDC without disclosure of its <em>v<sub>k</sub></em>. Indeed if the <em>Discloser</em> uses a metadata version of the ACDC in its <em>offer</em> then even its SAID is not disclosed until after acceptance of terms in the rule section.<a href="#section-13.3-18" class="pilcrow">¶</a></p>
-<p id="section-13.3-19">To protect against later forgery given a later compromise of the signing keys of the Issuer, the issuer <span class="bcp14">MUST</span> anchor an issuance proof seal to the ACDC in its KEL. This seal binds the signing key state to the issuance. There are two cases. In the first case, an issuance/revocation registry is used. In the second case, an issuance/revocation registry is not used.<a href="#section-13.3-19" class="pilcrow">¶</a></p>
-<p id="section-13.3-20">When the ACDC is registered using an issuance/revocation TEL (Transaction Event Log) then the issuance proof seal digest is the SAID of the issuance (inception) event in the ACDC's TEL entry. The issuance event in the TEL uses the aggregate value, <em>B</em>, as its identifier value. This binds the aggregate, <em>B</em>, to the issuance proof seal in the Issuer's KEL through the TEL.<a href="#section-13.3-20" class="pilcrow">¶</a></p>
-<p id="section-13.3-21">Recall that the usual purpose of a TEL is to provide a verifiable data registry that enables dynamic revocation of an ACDC via a state of the TEL. A verifier checks the state at the time of use to check if the associated ACDC has been revoked. The Issuer controls the state of the TEL. The registry identifier, <code>ri</code>, field is used to identify the public registry which usually provides a unique TEL entry for each ACDC. Typically the identifier of each TEL entry is the SAID of the TEL's inception event which is a digest of the event's contents which include the SAID of the ACDC. In the bulk issuance case, however, the TEL's inception event contents include the aggregate, <em>B</em>, instead of the SAID of a given ACDC. Recall that the goal is to generate an aggregate value that enables an Issuee to selectively disclose one ACDC in a bulk-issued set without leaking the other members of the set to un-permissioned parties (second or third).
-Using the aggregate, <em>B</em> of blinded ACDC saids as the TEL registry entry identifier allows all members of the bulk-issued set to share the same TEL without any third party being able to discover which TEL any ACDC is using in an un-permissioned provable way. Moreover, a second party may not discover in an un-permissioned way any other ACDCs from the bulk-issued set not specifically disclosed to that second party. In order to prove to which TEL a specific bulk issued ACDC belongs, the full inclusion proof must be disclosed.<a href="#section-13.3-21" class="pilcrow">¶</a></p>
-<p id="section-13.3-22">When the ACDC is not registered using an issuance/revocation TEL then the issuance proof seal digest is the aggregate, <em>B</em>, itself.<a href="#section-13.3-22" class="pilcrow">¶</a></p>
-<p id="section-13.3-23">In either case, this issuance proof seal makes a verifiable binding between the issuance of all the ACDCs in the bulk issued set and the key state of the Issuer at the time of issuance.<a href="#section-13.3-23" class="pilcrow">¶</a></p>
-<p id="section-13.3-24">A <em>Discloser</em> may make a basic provable non-repudiable selective disclosure of a given bulk issued ACDC, at index <em>k</em> by providing to the <em>Disclosee</em> four items of information (proof of inclusion). These are as follows:<a href="#section-13.3-24" class="pilcrow">¶</a></p>
+<p id="section-13.5-1">The amount of data transferred between the Issuer and Issuee (or recipient of an untargeted ACDC) at issuance of a set of bulk issued ACDCs may be minimized by using a hierarchical deterministic derivation function to derive the value of the UUID, <code>u</code>, fields from a shared secret salt <span>[<a href="#Salt" class="xref">Salt</a>]</span>.<a href="#section-13.5-1" class="pilcrow">¶</a></p>
+<p id="section-13.5-2">As described above, there are several ways that the Issuer may securely share a secret salt. Given that the Issuer and Issuee (or recipient when untargeted) AIDs are each controlled by an Ed25519 key pair(s), a corresponding X15519 asymmetric encryption key pair(s) may be derived from the controlling Ed25519 key pair(s) <span>[<a href="#EdSC" class="xref">EdSC</a>]</span><span>[<a href="#PSEd" class="xref">PSEd</a>]</span><span>[<a href="#TMEd" class="xref">TMEd</a>]</span>. An X25519 public key may be securely derived from an Ed25519 public key <span>[<a href="#KeyEx" class="xref">KeyEx</a>]</span><span>[<a href="#SKEM" class="xref">SKEM</a>]</span>. Likewise, an X25519 private key may be securely derived from an Ed25519 private key <span>[<a href="#KeyEx" class="xref">KeyEx</a>]</span><span>[<a href="#SKEM" class="xref">SKEM</a>]</span>.<a href="#section-13.5-2" class="pilcrow">¶</a></p>
+<p id="section-13.5-3">In an interactive approach, the Issuer derives a public asymmetric X25519 encryption key from the Issuee's published Ed25519 public key and the Issuee derives a public asymmetric X25519 encryption key from the Issuer's published Ed25519 public key. The two then interact via a Diffie-Hellman (DH) key exchange to create a shared symmetric encryption key <span>[<a href="#KeyEx" class="xref">KeyEx</a>]</span><span>[<a href="#DHKE" class="xref">DHKE</a>]</span>. The shared symmetric encryption key may be used to encrypt the secret salt or the shared symmetric encryption key itself may be used has high entropy cryptographic material from which the secret salt may be derived.<a href="#section-13.5-3" class="pilcrow">¶</a></p>
+<p id="section-13.5-4">In a non-interactive approach, the Issuer derives an X25519 asymmetric public encryption key from the Issuee's (or recipient's) public Ed25519 public key. The Issuer then encrypts the secret salt with that public asymmetric encryption key and signs the encryption with the Issuer's private Ed25519 signing key. This is transmitted to the Issuee, who verifies the signature and decrypts the secret salt using the private X25519 decryption key derived from the Issuee's private Ed25519 key. This non-interactive approach is more scalable for AIDs that are controlled with a multi-sig group of signing keys. The Issuer can broadcast to all members of the Issuee's (or recipient's) multi-sig signing group individually asymmetrically encrypted and signed copies of the secret salt.<a href="#section-13.5-4" class="pilcrow">¶</a></p>
+<p id="section-13.5-5">In addition to the secret salt, the Issuer also provides a template of the private ACDC but with empty UUID, <code>u</code>, and SAID, <code>d</code>, fields at the top-level of each nested block with such fields. Each UUID, <code>u</code>, field value is then derived from the shared salt with a deterministic path prefix that indexes both its membership in the bulk issued set and its location in the ACDC. Given the UUID, <code>u</code>, field value, the associated SAID, <code>d</code>, field value may then be derived. Likewise, both full and compact versions of the ACDC may then be generated. This generation is analogous to that described in the section for selective disclosure ACDCs but extended to a set of private ACDCs.<a href="#section-13.5-5" class="pilcrow">¶</a></p>
+<p id="section-13.5-6">The initial element in each deterministic derivation path is the string value of the bulk-issued member's copy index <em>k</em>, such as "0", "1", "2" etc.  Specifically, if <em>k</em> denotes the index of an ordered set of bulk issued private ACDCs of size <em>M</em>, the derivation path starts with the string <em>"k"</em> where <em>k</em> is replaced with the decimal or hexadecimal textual representation of the numeric index <em>k</em>. Furthermore, a bulk-issued private ACDC with a private attribute section uses <em>"k"</em> to derive its top-level UUID and <em>"k/0"</em> to derive its attribute section UUID. This hierarchical path is extended to any nested private attribute blocks. This approach is further extended to enable bulk issued selective disclosure ACDCs by using a similar hierarchical derivation path for the UUID field value in each of the selectively disclosable blocks in the array of attributes. For example, the path <em>"k/j"</em> is used to generate the UUID of attribute index <em>j</em> at bulk-issued ACDC index <em>k</em>.<a href="#section-13.5-6" class="pilcrow">¶</a></p>
+<p id="section-13.5-7">In addition to the shared salt and ACDC template, the Issuer also provides a list of signatures of SAIDs, one for each SAID of each copy of the associated compact bulk-issued ACDC.  The Issuee (or recipient) can generate on-demand each compact or uncompacted ACDC from the template, the salt, and its index <em>k</em>. The Issuee does not need to store a copy of each bulk issued ACDC, merely the template, the salt, and the list of signatures.<a href="#section-13.5-7" class="pilcrow">¶</a></p>
+<p id="section-13.5-8">The Issuer <span class="bcp14">MUST</span> also anchor in its KEL an issuance proof digest seal of the set of bulk issued ACDCs. The issuance proof digest seal makes a cryptographic commitment to the set of top-level SAIDS belonging to the bulk issued ACDCs. This protects against later forgery of ACDCs in the event the Issuer's signing keys become compromised.  A later attempt at forgery requires a new event or new version of an event that includes a new anchoring issuance proof digest seal that makes a cryptographic commitment to the set of newly forged ACDC SAIDS. This new anchoring event of the forgery is therefore detectable.<a href="#section-13.5-8" class="pilcrow">¶</a></p>
+<p id="section-13.5-9">Similarly, to the process of generating a selective disclosure attribute ACDC, the issuance proof digest is an aggregate that is aggregated from all members in the bulk-issued set of ACDCs. The complication of this approach is that it must be done in such a way as to not enable provable correlation by a third party of the actual SAIDS of the bulk-issued set of ACDCs. Therefore the actual SAIDs must not be aggregated but blinded commitments to those SAIDs instead. With blinded commitments, knowledge of any or all members of such a set does not disclose the membership of any SAID unless and until it is unblinded. Recall that the purpose of bulk issuance is to allow the SAID of an ACDC in a bulk issued set to be used publicly without correlating it in an un-permissioned provable way to the SAIDs of the other members.<a href="#section-13.5-9" class="pilcrow">¶</a></p>
+<p id="section-13.5-10">The basic approach is to compute the aggregate denoted, <em>B</em>, as the digest of the concatenation of a set of blinded digests of bulk issued ACDC SAIDS. Each ACDC SAID is first blinded via concatenation to a UUID (salty nonce) and then the digest of that concatenation is concatenated with the other blinded SAID digests. Finally, a digest of that concatenation provides the aggregate.<a href="#section-13.5-10" class="pilcrow">¶</a></p>
+<p id="section-13.5-11">Suppose there are <em>M</em> ACDCs in a bulk issued set. Using zero-based indexing for each member of the bulk issued set of ACDCs, such that index <em>k</em> satisfies <em>k in {0, ..., M-1}, let *d<sub>k</sub></em> denote the top-level SAID of an ACDC in an ordered set of bulk-issued ACDCs. Let <em>v<sub>k</sub></em> denote the UUID (salty nonce) or blinding factor that is used to blind that said. The blinding factor, <em>v<sub>k</sub></em>, is NOT the top-level UUID, <code>u</code>, field of the ACDC itself but an entirely different UUID used to blind the ACDC's SAID for the purpose of aggregation. The derivation path for <em>v<sub>k</sub></em> from the shared secret salt is <em>"k."</em> where <em>k</em> is the index of the bulk-issued ACDC.<a href="#section-13.5-11" class="pilcrow">¶</a></p>
+<p id="section-13.5-12">Let <em>c<sub>k</sub> = v<sub>k</sub> + d<sub>k</sub></em>,  denote the blinding concatenation where <em>+</em> is the infix concatenation operator.
+Then the blinded digest, <em>b<sub>k</sub></em>, is given by,
+<em>b<sub>k</sub> = H(c<sub>k</sub>) = H(v<sub>k</sub> + d<sub>k</sub>)</em>,
+where <em>H</em> is the digest operator.<a href="#section-13.5-12" class="pilcrow">¶</a></p>
+<p id="section-13.5-13">The aggregation of blinded digests, <em>B</em>, is given by,
+<em>B = H(C(b<sub>k</sub> for all k in {0, ..., M-1}))</em>,
+where <em>C</em> is the concatenation operator and <em>H</em> is the digest operator. This aggregate, <em>B</em>, provides the issuance proof digest.<a href="#section-13.5-13" class="pilcrow">¶</a></p>
+<p id="section-13.5-14">The aggregate, <em>B</em>, makes a blinded cryptographic commitment to the ordered elements in the list
+<em>[b<sub>0</sub>, b<sub>1</sub>, ...., b<sub>M-1</sub>]</em>. A commitment to <em>B</em> is a commitment to all the <em>b<sub>k</sub></em> and hence all the d<sub>k</sub>.<a href="#section-13.5-14" class="pilcrow">¶</a></p>
+<p id="section-13.5-15">Given sufficient collision resistance of the digest operator, the digest of an ordered concatenation is not subject to a birthday attack on its concatenated elements <span>[<a href="#BDC" class="xref">BDC</a>]</span><span>[<a href="#BDay" class="xref">BDay</a>]</span><span>[<a href="#QCHC" class="xref">QCHC</a>]</span><span>[<a href="#HCR" class="xref">HCR</a>]</span><span>[<a href="#Hash" class="xref">Hash</a>]</span>.<a href="#section-13.5-15" class="pilcrow">¶</a></p>
+<p id="section-13.5-16">Disclosure of any given <em>b<sub>k</sub></em> element does not expose or disclose any discoverable information detail about either the SAID of its associated ACDC or any other ACDC's SAID. Therefore one may safely disclose the full list of <em>b<sub>k</sub></em> elements without exposing the blinded bulk issued SAID values, d<sub>k</sub>.<a href="#section-13.5-16" class="pilcrow">¶</a></p>
+<p id="section-13.5-17">Proof of inclusion in the list of blinded digests consists of checking the list for a matching value. A computationally efficient way to do this is to create a hash table or B-tree of the list and then check for inclusion via lookup in the hash table or B-tree.<a href="#section-13.5-17" class="pilcrow">¶</a></p>
+<p id="section-13.5-18">A proof of inclusion of an ACDC in a bulk-issued set requires disclosure of <em>v<sub>k</sub></em> which is only disclosed after the disclosee has accepted (agreed to) the terms of the rule section. Therefore, in the event the <em>Disclosee</em> declines to accept the terms of disclosure, then a presentation/disclosure of the compact version of the ACDC does not provide any point of correlation to any other SAID of any other ACDC from the bulk set that contributes to the aggregate <em>B</em>. In addition, because the other SAIDs are hidden by each <em>b<sub>k</sub></em> inside the aggregate, <em>B</em>, even a presentation/disclosure of,
+<em>[b<sub>0</sub>, b<sub>1</sub>, ...., b<sub>M-1</sub>]</em>
+does not provide any point of correlation to the actual bulk-issued ACDC without disclosure of its <em>v<sub>k</sub></em>. Indeed if the <em>Discloser</em> uses a metadata version of the ACDC in its <em>offer</em> then even its SAID is not disclosed until after acceptance of terms in the rule section.<a href="#section-13.5-18" class="pilcrow">¶</a></p>
+<p id="section-13.5-19">To protect against later forgery given a later compromise of the signing keys of the Issuer, the issuer <span class="bcp14">MUST</span> anchor an issuance proof seal to the ACDC in its KEL. This seal binds the signing key state to the issuance. There are two cases. In the first case, an issuance/revocation registry is used. In the second case, an issuance/revocation registry is not used.<a href="#section-13.5-19" class="pilcrow">¶</a></p>
+<p id="section-13.5-20">When the ACDC is registered using an issuance/revocation TEL (Transaction Event Log) then the issuance proof seal digest is the SAID of the issuance (inception) event in the ACDC's TEL entry. The issuance event in the TEL uses the aggregate value, <em>B</em>, as its identifier value. This binds the aggregate, <em>B</em>, to the issuance proof seal in the Issuer's KEL through the TEL.<a href="#section-13.5-20" class="pilcrow">¶</a></p>
+<p id="section-13.5-21">Recall that the usual purpose of a TEL is to provide a verifiable data registry that enables dynamic revocation of an ACDC via a state of the TEL. A verifier checks the state at the time of use to check if the associated ACDC has been revoked. The Issuer controls the state of the TEL. The registry identifier, <code>ri</code>, field is used to identify the public registry which usually provides a unique TEL entry for each ACDC. Typically the identifier of each TEL entry is the SAID of the TEL's inception event which is a digest of the event's contents which include the SAID of the ACDC. In the bulk issuance case, however, the TEL's inception event contents include the aggregate, <em>B</em>, instead of the SAID of a given ACDC. Recall that the goal is to generate an aggregate value that enables an Issuee to selectively disclose one ACDC in a bulk-issued set without leaking the other members of the set to un-permissioned parties (second or third).
+Using the aggregate, <em>B</em> of blinded ACDC saids as the TEL registry entry identifier allows all members of the bulk-issued set to share the same TEL without any third party being able to discover which TEL any ACDC is using in an un-permissioned provable way. Moreover, a second party may not discover in an un-permissioned way any other ACDCs from the bulk-issued set not specifically disclosed to that second party. In order to prove to which TEL a specific bulk issued ACDC belongs, the full inclusion proof must be disclosed.<a href="#section-13.5-21" class="pilcrow">¶</a></p>
+<p id="section-13.5-22">When the ACDC is not registered using an issuance/revocation TEL then the issuance proof seal digest is the aggregate, <em>B</em>, itself.<a href="#section-13.5-22" class="pilcrow">¶</a></p>
+<p id="section-13.5-23">In either case, this issuance proof seal makes a verifiable binding between the issuance of all the ACDCs in the bulk issued set and the key state of the Issuer at the time of issuance.<a href="#section-13.5-23" class="pilcrow">¶</a></p>
+<p id="section-13.5-24">A <em>Discloser</em> may make a basic provable non-repudiable selective disclosure of a given bulk issued ACDC, at index <em>k</em> by providing to the <em>Disclosee</em> four items of information (proof of inclusion). These are as follows:<a href="#section-13.5-24" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-13.3-25.1">The ACDC in compact form (at index <em>k</em>) where <em>d<sub>k</sub></em> as the value of its top-level SAID, <code>d</code>, field.<a href="#section-13.3-25.1" class="pilcrow">¶</a>
+<li class="normal" id="section-13.5-25.1">The ACDC in compact form (at index <em>k</em>) where <em>d<sub>k</sub></em> as the value of its top-level SAID, <code>d</code>, field.<a href="#section-13.5-25.1" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-13.3-25.2">The blinding factor, <em>v<sub>k</sub></em> from which <em>b<sub>k</sub> = H(v<sub>k</sub> + d<sub>k</sub>)</em> may be computed.<a href="#section-13.3-25.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-13.5-25.2">The blinding factor, <em>v<sub>k</sub></em> from which <em>b<sub>k</sub> = H(v<sub>k</sub> + d<sub>k</sub>)</em> may be computed.<a href="#section-13.5-25.2" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-13.3-25.3">The list of all blinded SAIDs, <em>[b<sub>0</sub>, b<sub>1</sub>, ...., b<sub>M-1</sub>]</em> that includes <em>b<sub>k</sub></em>.<a href="#section-13.3-25.3" class="pilcrow">¶</a>
+          <li class="normal" id="section-13.5-25.3">The list of all blinded SAIDs, <em>[b<sub>0</sub>, b<sub>1</sub>, ...., b<sub>M-1</sub>]</em> that includes <em>b<sub>k</sub></em>.<a href="#section-13.5-25.3" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-13.3-25.4">The signature(s), <em>s<sub>k</sub></em>, of the Issuee on the ACDC's top level SAID, <em>d<sub>k</sub></em>, field.<a href="#section-13.3-25.4" class="pilcrow">¶</a>
+          <li class="normal" id="section-13.5-25.4">The signature(s), <em>s<sub>k</sub></em>, of the Issuee on the ACDC's top level SAID, <em>d<sub>k</sub></em>, field.<a href="#section-13.5-25.4" class="pilcrow">¶</a>
 </li>
         </ul>
-<p id="section-13.3-26">A <em>Disclosee</em> may then verify the disclosure by:<a href="#section-13.3-26" class="pilcrow">¶</a></p>
+<p id="section-13.5-26">A <em>Disclosee</em> may then verify the disclosure by:<a href="#section-13.5-26" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-13.3-27.1">computing <em>d<sub>j</sub></em> on the disclosed compact ACDC.<a href="#section-13.3-27.1" class="pilcrow">¶</a>
+<li class="normal" id="section-13.5-27.1">computing <em>d<sub>j</sub></em> on the disclosed compact ACDC.<a href="#section-13.5-27.1" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-13.3-27.2">computing <em>b<sub>k</sub> = H(v<sub>k</sub> + d<sub>k</sub>)</em><a href="#section-13.3-27.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-13.5-27.2">computing <em>b<sub>k</sub> = H(v<sub>k</sub> + d<sub>k</sub>)</em><a href="#section-13.5-27.2" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-13.3-27.3">confirming that the computed <em>b<sub>k</sub></em> appears in the provided list <em>[b<sub>0</sub>, b<sub>1</sub>, ...., b<sub>M-1</sub>]</em>.<a href="#section-13.3-27.3" class="pilcrow">¶</a>
+          <li class="normal" id="section-13.5-27.3">confirming that the computed <em>b<sub>k</sub></em> appears in the provided list <em>[b<sub>0</sub>, b<sub>1</sub>, ...., b<sub>M-1</sub>]</em>.<a href="#section-13.5-27.3" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-13.3-27.4">computing the aggregate <em>B</em> from the provided list <em>[b<sub>0</sub>, b<sub>1</sub>, ...., b<sub>M-1</sub>]</em>..<a href="#section-13.3-27.4" class="pilcrow">¶</a>
+          <li class="normal" id="section-13.5-27.4">computing the aggregate <em>B</em> from the provided list <em>[b<sub>0</sub>, b<sub>1</sub>, ...., b<sub>M-1</sub>]</em>..<a href="#section-13.5-27.4" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-13.3-27.5">confirming the presence of an issuance seal digest in the Issuer's KEL that makes a commitment to the aggregate, <em>B</em>, either directly or indirectly through a TEL registry entry.<a href="#section-13.3-27.5" class="pilcrow">¶</a>
+          <li class="normal" id="section-13.5-27.5">confirming the presence of an issuance seal digest in the Issuer's KEL that makes a commitment to the aggregate, <em>B</em>, either directly or indirectly through a TEL registry entry.<a href="#section-13.5-27.5" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-13.3-27.6">verifying the provided signature(s), <em>s<sub>k</sub></em>, of the Issuee on the provided top level SAID, <em>d<sub>k</sub></em>, field.<a href="#section-13.3-27.6" class="pilcrow">¶</a>
+          <li class="normal" id="section-13.5-27.6">verifying the provided signature(s), <em>s<sub>k</sub></em>, of the Issuee on the provided top level SAID, <em>d<sub>k</sub></em>, field.<a href="#section-13.5-27.6" class="pilcrow">¶</a>
 </li>
         </ul>
-<p id="section-13.3-28">The last 3 steps that culminate with verifying the signature(s) require determining the key state of the Issuer at the time of issuance, this may require additional verification steps as per the KERI, PTEL, and CESR-Proof protocols.<a href="#section-13.3-28" class="pilcrow">¶</a></p>
-<p id="section-13.3-29">The requirement of an anchored issuance proof seal means that the forger Must first successfully publish in the KEL of the issuer an inclusion proof digest seal bound to a set of forged bulk issued ACDCs. This makes any forgery attempt detectable. To elaborate, the only way to successfully publish such a seal is in a subsequent interaction event in a KEL that has not yet changed its key state via a rotation event. Whereas any KEL that has changed its key state via a rotation must be forked before the rotation. This makes the forgery attempt either both detectable and recoverable via rotation in any KEL that has not yet changed its key state or detectable as duplicity in any KEL that has changed its key state. In any event, the issuance proof seal makes any later attempt at forgery using compromised keys detectable.<a href="#section-13.3-29" class="pilcrow">¶</a></p>
+<p id="section-13.5-28">The last 3 steps that culminate with verifying the signature(s) require determining the key state of the Issuer at the time of issuance, this may require additional verification steps as per the KERI, PTEL, and CESR-Proof protocols.<a href="#section-13.5-28" class="pilcrow">¶</a></p>
+<p id="section-13.5-29">The requirement of an anchored issuance proof seal means that the forger Must first successfully publish in the KEL of the issuer an inclusion proof digest seal bound to a set of forged bulk issued ACDCs. This makes any forgery attempt detectable. To elaborate, the only way to successfully publish such a seal is in a subsequent interaction event in a KEL that has not yet changed its key state via a rotation event. Whereas any KEL that has changed its key state via a rotation must be forked before the rotation. This makes the forgery attempt either both detectable and recoverable via rotation in any KEL that has not yet changed its key state or detectable as duplicity in any KEL that has changed its key state. In any event, the issuance proof seal makes any later attempt at forgery using compromised keys detectable.<a href="#section-13.5-29" class="pilcrow">¶</a></p>
 <div id="inclusion-proof-via-merkle-tree">
-<section id="section-13.3.1">
+<section id="section-13.5.1">
           <h4 id="name-inclusion-proof-via-merkle-t">
-<a href="#section-13.3.1" class="section-number selfRef">13.3.1. </a><a href="#name-inclusion-proof-via-merkle-t" class="section-name selfRef">Inclusion Proof via Merkle Tree</a>
+<a href="#section-13.5.1" class="section-number selfRef">13.5.1. </a><a href="#name-inclusion-proof-via-merkle-t" class="section-name selfRef">Inclusion Proof via Merkle Tree</a>
           </h4>
-<p id="section-13.3.1-1">The inclusion proof via aggregated list may be somewhat verbose when there are a very large number of bulk issued ACDCs in a given set. A more efficient approach is to create a Merkle tree of the blinded SAID digests, <em>b<sub>k</sub></em> and set the aggregate <em>B</em> value as the Merkle tree root <span>[<a href="#Mrkl" class="xref">Mrkl</a>]</span>.<a href="#section-13.3.1-1" class="pilcrow">¶</a></p>
-<p id="section-13.3.1-2">The Merkle tree needs to have appropriate second-pre-image attack protection of interior branch nodes <span>[<a href="#TwoPI" class="xref">TwoPI</a>]</span><span>[<a href="#MTSec" class="xref">MTSec</a>]</span>. The discloser then only needs to provide a subset of digests from the Merkle tree to prove that a given digest, <em>b<sub>k</sub></em> contributed to the Merkle tree root digest. For a small numbered bulk issued set of ACDCs, the added complexity of the Merkle tree approach may not be worth the savings in verbosity.<a href="#section-13.3.1-2" class="pilcrow">¶</a></p>
+<p id="section-13.5.1-1">The inclusion proof via aggregated list may be somewhat verbose when there are a very large number of bulk issued ACDCs in a given set. A more efficient approach is to create a Merkle tree of the blinded SAID digests, <em>b<sub>k</sub></em> and set the aggregate <em>B</em> value as the Merkle tree root <span>[<a href="#Mrkl" class="xref">Mrkl</a>]</span>.<a href="#section-13.5.1-1" class="pilcrow">¶</a></p>
+<p id="section-13.5.1-2">The Merkle tree needs to have appropriate second-pre-image attack protection of interior branch nodes <span>[<a href="#TwoPI" class="xref">TwoPI</a>]</span><span>[<a href="#MTSec" class="xref">MTSec</a>]</span>. The discloser then only needs to provide a subset of digests from the Merkle tree to prove that a given digest, <em>b<sub>k</sub></em> contributed to the Merkle tree root digest. For a small numbered bulk issued set of ACDCs, the added complexity of the Merkle tree approach may not be worth the savings in verbosity.<a href="#section-13.5.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="bulk-issuance-of-private-acdcs-with-unique-issuee-aids">
-<section id="section-13.3.2">
+<section id="section-13.5.2">
           <h4 id="name-bulk-issuance-of-private-ac">
-<a href="#section-13.3.2" class="section-number selfRef">13.3.2. </a><a href="#name-bulk-issuance-of-private-ac" class="section-name selfRef">Bulk Issuance of Private ACDCs with Unique Issuee AIDs</a>
+<a href="#section-13.5.2" class="section-number selfRef">13.5.2. </a><a href="#name-bulk-issuance-of-private-ac" class="section-name selfRef">Bulk Issuance of Private ACDCs with Unique Issuee AIDs</a>
           </h4>
-<p id="section-13.3.2-1">One potential point of provable but un-permissioned correlation among any group of colluding malicious <em>Disclosees</em> (Second-Party verifiers) may arise when the same Issuee AID is used for presentation/disclosure to all <em>Disclosees</em>  in that group. Recall that the contents of private ACDCs are not disclosed except to permissioned <em>Disclosees</em> (Second-Parties), thus a common <em>Issuee</em> AID would only be a point of correlation for a group of colluding malicious verifiers. But in some cases removing this un-permissioned point of correlation may be desirable.<a href="#section-13.3.2-1" class="pilcrow">¶</a></p>
-<p id="section-13.3.2-2">One solution to this problem is for the <em>Issuee</em> to use a unique AID for the copy of a bulk issued ACDC presented to each <em>Disclosee</em> in a given context. This requires that each ACDC copy in the bulk-issued set use a unique <em>Issuee</em> AID. This would enable the <em>Issuee</em> in a given context to minimize provable correlation by malicious <em>Disclosees</em> against any given <em>Issuee</em> AID. In this case, the bulk issuance process may be augmented to include the derivation of a unique Issuee AID in each copy of the bulk-issued ACDC by including in the inception event that defines a given Issuee's self-addressing AID, a digest seal derived from the shared salt and copy index <em>k</em>. The derivation path for the digest seal is <em>"k/0."</em> where <em>k</em> is the index of the ACDC. To clarify <em>"k/0."</em> specifies the path to generate the UUID to be included in the inception event that generates the Issuee AID for the ACDC at index <em>k</em>. This can be generated on-demand by the <em>Issuee</em>. Each unique <em>Issuee</em> AID would also need its own KEL. But generation and publication of the associated KEL can be delayed until the bulk-issued ACDC is actually used. This approach completely isolates a given <em>Issuee</em> AID to a given context with respect to the use of a bulk-issued private ACDC. This protects against even the un-permissioned correlation among a group of malicious Disclosees (Second Parties) via the Issuee AID.<a href="#section-13.3.2-2" class="pilcrow">¶</a></p>
+<p id="section-13.5.2-1">One potential point of provable but un-permissioned correlation among any group of colluding malicious <em>Disclosees</em> (Second-Party verifiers) may arise when the same Issuee AID is used for presentation/disclosure to all <em>Disclosees</em>  in that group. Recall that the contents of private ACDCs are not disclosed except to permissioned <em>Disclosees</em> (Second-Parties), thus a common <em>Issuee</em> AID would only be a point of correlation for a group of colluding malicious verifiers. But in some cases removing this un-permissioned point of correlation may be desirable.<a href="#section-13.5.2-1" class="pilcrow">¶</a></p>
+<p id="section-13.5.2-2">One solution to this problem is for the <em>Issuee</em> to use a unique AID for the copy of a bulk issued ACDC presented to each <em>Disclosee</em> in a given context. This requires that each ACDC copy in the bulk-issued set use a unique <em>Issuee</em> AID. This would enable the <em>Issuee</em> in a given context to minimize provable correlation by malicious <em>Disclosees</em> against any given <em>Issuee</em> AID. In this case, the bulk issuance process may be augmented to include the derivation of a unique Issuee AID in each copy of the bulk-issued ACDC by including in the inception event that defines a given Issuee's self-addressing AID, a digest seal derived from the shared salt and copy index <em>k</em>. The derivation path for the digest seal is <em>"k/0."</em> where <em>k</em> is the index of the ACDC. To clarify <em>"k/0."</em> specifies the path to generate the UUID to be included in the inception event that generates the Issuee AID for the ACDC at index <em>k</em>. This can be generated on-demand by the <em>Issuee</em>. Each unique <em>Issuee</em> AID would also need its own KEL. But generation and publication of the associated KEL can be delayed until the bulk-issued ACDC is actually used. This approach completely isolates a given <em>Issuee</em> AID to a given context with respect to the use of a bulk-issued private ACDC. This protects against even the un-permissioned correlation among a group of malicious Disclosees (Second Parties) via the Issuee AID.<a href="#section-13.5.2-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
 <div id="independent-tel-bulk-issued-acdcs">
-<section id="section-13.4">
+<section id="section-13.6">
         <h3 id="name-independent-tel-bulk-issued">
-<a href="#section-13.4" class="section-number selfRef">13.4. </a><a href="#name-independent-tel-bulk-issued" class="section-name selfRef">Independent TEL Bulk-Issued ACDCs</a>
+<a href="#section-13.6" class="section-number selfRef">13.6. </a><a href="#name-independent-tel-bulk-issued" class="section-name selfRef">Independent TEL Bulk-Issued ACDCs</a>
         </h3>
-<p id="section-13.4-1">Recall that the purpose of using the aggregate <em>B</em> for a bulk-issued set from which the TEL identifier is derived is to enable a set of bulk issued ACDCs to share a single public TEL that provides dynamic revocation but without enabling un-permissioned correlation to any other members of the bulk set by virtue of the shared TEL. This enables the issuance/revocation/transfer state of all copies of a set of bulk-issued ACDCs to be provided by a single TEL which minimizes the storage and compute requirements on the TEL registry while providing selective disclosure to prevent un-permissioned correlation via the public TEL.<a href="#section-13.4-1" class="pilcrow">¶</a></p>
-<p id="section-13.4-2">However, in some applications where chain-link confidentiality does not sufficiently deter malicious provable correlation by Disclosees (Second-Party verifiers), an Issuee may benefit from using ACDC with independent TELs but that are still bulk-issued.<a href="#section-13.4-2" class="pilcrow">¶</a></p>
-<p id="section-13.4-3">In this case, the bulk issuance process must be augmented so that each uniquely identified copy of the ACDC gets its own TEL entry in the registry. Each Disclosee (verifier) of a full presentation/disclosure of a given copy of the ACDC only receives proof of one uniquely identified TEL and can NOT provably correlate the TEL state of one presentation to any other presentation because the ACDC SAID, the TEL identifier, and the signature of the issuer on the SAID of a given copy will all be different for each copy. There is therefore no point of provable correlation permissioned or otherwise.<a href="#section-13.4-3" class="pilcrow">¶</a></p>
-<p id="section-13.4-4">The obvious drawbacks of this approach (independent unique TELs for each private ACDC) are that the size of the registry database increases as a multiple of the number of copies of each bulk-issued ACDC and every time an Issuer must change the TEL state of a given set of copies it must change the state of multiple TELs in the registry. This imposes both a storage and computation burden on the registry. The primary advantage of this approach, however, is that each copy of a private ACDC has a uniquely identified TEL. This minimizes un-permissioned Third-Party exploitation via provable correlation of TEL identifiers even with colluding Second-Party verifiers. They are limited to statistical correlation techniques.<a href="#section-13.4-4" class="pilcrow">¶</a></p>
-<p id="section-13.4-5">In this case, the set of private ACDCs may or may not share the same Issuee AID because for all intents and purposes each copy appears to be a different ACDC even when issued to the same Issuee. Nonetheless, using unique Issuee AIDs may further reduce correlation by malicious Disclosees (Second-Party verifiers) beyond using independent TELs.<a href="#section-13.4-5" class="pilcrow">¶</a></p>
-<p id="section-13.4-6">To summarize the main benefit of this approach, in spite of its storage and compute burden, is that in some applications chain-link confidentiality does not sufficiently deter un-permissioned malicious collusion. Therefore completely independent bulk-issued ACDCs may be used.<a href="#section-13.4-6" class="pilcrow">¶</a></p>
+<p id="section-13.6-1">Recall that the purpose of using the aggregate <em>B</em> for a bulk-issued set from which the TEL identifier is derived is to enable a set of bulk issued ACDCs to share a single public TEL that provides dynamic revocation but without enabling un-permissioned correlation to any other members of the bulk set by virtue of the shared TEL. This enables the issuance/revocation/transfer state of all copies of a set of bulk-issued ACDCs to be provided by a single TEL which minimizes the storage and compute requirements on the TEL registry while providing selective disclosure to prevent un-permissioned correlation via the public TEL.<a href="#section-13.6-1" class="pilcrow">¶</a></p>
+<p id="section-13.6-2">However, in some applications where chain-link confidentiality does not sufficiently deter malicious provable correlation by Disclosees (Second-Party verifiers), an Issuee may benefit from using ACDC with independent TELs but that are still bulk-issued.<a href="#section-13.6-2" class="pilcrow">¶</a></p>
+<p id="section-13.6-3">In this case, the bulk issuance process must be augmented so that each uniquely identified copy of the ACDC gets its own TEL entry in the registry. Each Disclosee (verifier) of a full presentation/disclosure of a given copy of the ACDC only receives proof of one uniquely identified TEL and can NOT provably correlate the TEL state of one presentation to any other presentation because the ACDC SAID, the TEL identifier, and the signature of the issuer on the SAID of a given copy will all be different for each copy. There is therefore no point of provable correlation permissioned or otherwise.<a href="#section-13.6-3" class="pilcrow">¶</a></p>
+<p id="section-13.6-4">The obvious drawbacks of this approach (independent unique TELs for each private ACDC) are that the size of the registry database increases as a multiple of the number of copies of each bulk-issued ACDC and every time an Issuer must change the TEL state of a given set of copies it must change the state of multiple TELs in the registry. This imposes both a storage and computation burden on the registry. The primary advantage of this approach, however, is that each copy of a private ACDC has a uniquely identified TEL. This minimizes un-permissioned Third-Party exploitation via provable correlation of TEL identifiers even with colluding Second-Party verifiers. They are limited to statistical correlation techniques.<a href="#section-13.6-4" class="pilcrow">¶</a></p>
+<p id="section-13.6-5">In this case, the set of private ACDCs may or may not share the same Issuee AID because for all intents and purposes each copy appears to be a different ACDC even when issued to the same Issuee. Nonetheless, using unique Issuee AIDs may further reduce correlation by malicious Disclosees (Second-Party verifiers) beyond using independent TELs.<a href="#section-13.6-5" class="pilcrow">¶</a></p>
+<p id="section-13.6-6">To summarize the main benefit of this approach, in spite of its storage and compute burden, is that in some applications chain-link confidentiality does not sufficiently deter un-permissioned malicious collusion. Therefore completely independent bulk-issued ACDCs may be used.<a href="#section-13.6-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>

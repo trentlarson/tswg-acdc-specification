@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-05-19T01:04:03.698580+00:00",
+  "timestamp": "2022-06-23T00:53:30.384932+00:00",
   "repo": "trustoverip/tswg-acdc-specification",
   "labels": [
     {
@@ -2075,6 +2075,34 @@
       "mergedBy": "SmithSamuelM",
       "mergeCommit": {
         "oid": "45f4e3ba08d264049fd25c15d9fdb848df6899c7"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 63,
+      "id": "PR_kwDOGxcvRc46C03n",
+      "title": "fixed typos. some reorg of Selective Disclosure section added tiered \u2026",
+      "url": "https://github.com/trustoverip/tswg-acdc-specification/pull/63",
+      "state": "MERGED",
+      "author": "SmithSamuelM",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "\u2026selective disclosure.",
+      "createdAt": "2022-06-21T16:56:34Z",
+      "updatedAt": "2022-06-21T16:57:13Z",
+      "baseRepository": "trustoverip/tswg-acdc-specification",
+      "baseRefName": "main",
+      "baseRefOid": "45f4e3ba08d264049fd25c15d9fdb848df6899c7",
+      "headRepository": "SmithSamuelM/ietf-acdc",
+      "headRefName": "main",
+      "headRefOid": "0e37e459296e94b563507dcd2b631953176f0e29",
+      "closedAt": "2022-06-21T16:57:13Z",
+      "mergedAt": "2022-06-21T16:57:13Z",
+      "mergedBy": "SmithSamuelM",
+      "mergeCommit": {
+        "oid": "a4b9313353f01d98d4982ceb6dad65c9d84c429b"
       },
       "comments": [],
       "reviews": []

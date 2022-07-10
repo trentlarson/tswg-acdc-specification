@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-06-23T00:53:30.384932+00:00",
+  "timestamp": "2022-07-10T01:06:03.887337+00:00",
   "repo": "trustoverip/tswg-acdc-specification",
   "labels": [
     {
@@ -508,6 +508,22 @@
           "updatedAt": "2022-04-11T19:30:27Z"
         }
       ]
+    },
+    {
+      "number": 64,
+      "id": "I_kwDOGxcvRc5Nd36-",
+      "title": "Terminology and Glossary ",
+      "url": "https://github.com/trustoverip/tswg-acdc-specification/issues/64",
+      "state": "OPEN",
+      "author": "henkvancann",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "\r\nJust checking: Is this a valid example of the amalgamation of _proof of authorship_ and _proof of authority_ in a chain of ACDCs?\r\n\r\nhttps://github.com/trustoverip/acdc/wiki/proof-of-authority#example-apc--book-rights-sold",
+      "createdAt": "2022-07-09T12:55:31Z",
+      "updatedAt": "2022-07-09T12:55:31Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
